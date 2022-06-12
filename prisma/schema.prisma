@@ -8,22 +8,57 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  name        String
-  Transaction Transaction[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  Transaction          Transaction[]
+  Storages             Storage[]
+  RecurringTransaction RecurringTransaction[]
 }
 
 model Sink {
-  id           String        @id @default(cuid())
-  name         String
-  transactions Transaction[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  Transactions         Transaction[]
+  RecurringTransaction RecurringTransaction[]
 }
 
 model Transaction {
-  id     String @id @default(cuid())
-  amount Int
-  user   User   @relation(fields: [userId], references: [id])
-  Sink   Sink   @relation(fields: [sinkId], references: [id])
-  sinkId String
-  userId String
+  id        String  @id @default(cuid())
+  amount    Int
+  Sink      Sink    @relation(fields: [sinkId], references: [id])
+  sinkId    String
+  User      User    @relation(fields: [userId], references: [id])
+  userId    String
+  Storage   Storage @relation(fields: [storageId], references: [id])
+  storageId String
+}
+
+model Storage {
+  id                   String                 @id @default(cuid())
+  name                 String
+  Transactions         Transaction[]
+  User                 User                   @relation(fields: [userId], references: [id])
+  userId               String
+  interestRate         Float                  @default(0)
+  RecurringTransaction RecurringTransaction[]
+  startAmount          Int                    @default(0)
+}
+
+enum RecurringTransactionFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+model RecurringTransaction {
+  id        String                        @id @default(cuid())
+  amount    Int
+  Sink      Sink                          @relation(fields: [sinkId], references: [id])
+  sinkId    String
+  User      User                          @relation(fields: [userId], references: [id])
+  userId    String
+  Storage   Storage                       @relation(fields: [storageId], references: [id])
+  storageId String
+  frequency RecurringTransactionFrequency
 }

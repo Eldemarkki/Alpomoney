@@ -27,17 +27,11 @@ const SinkForm = () => {
 
 export default function Home(props: Props) {
   return (
-    <div style={{
-      padding: 30
-    }}>
+    <div>
       <Head>
         <title>Expenseer</title>
         <meta name="description" content="Expenseer" />
       </Head>
-      <h1>Expenseer</h1>
-      <SinkForm />
-      <h2>Sinks</h2>
-      {props.sinks.map(s => <p key={s.id}>{s.name}</p>)}
     </div>
   )
 }
