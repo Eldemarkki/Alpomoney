@@ -77,15 +77,15 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
     dispatch(setSinks(props.sinks));
   }, [dispatch, props.sinks]);
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const recurringTransactions = useSelector((state: RootState) => state.recurringTransactions.recurringTransactions);
 
   return <div>
     <h1>Recurring transactions</h1>
-    <button onClick={() => setModalOpen(true)}>
+    <button onClick={() => setDialogOpen(true)}>
       New recurring transaction
     </button>
-    <NewRecurringTransactionDialog open={modalOpen} onClose={() => setModalOpen(false)} />
+    <NewRecurringTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <table>
       <thead>
         <tr>
@@ -133,11 +133,28 @@ export const getServerSideProps = withIronSessionSsr(
     const sinks = await prisma.sink.findMany({});
     const storages = await prisma.storage.findMany({});
 
+    // TODO: Fix this n+1 problem
+    const storagesWithSum = await Promise.all(storages.map(async storage => {
+      const sum = await prisma.transaction.aggregate({
+        _sum: {
+          amount: true
+        },
+        where: {
+          storageId: storage.id
+        }
+      });
+
+      return {
+        ...storage,
+        sum: sum._sum.amount || 0
+      }
+    }))
+
     return {
       props: {
         recurringTransactions,
         sinks,
-        storages
+        storages: storagesWithSum
       }
     }
   },

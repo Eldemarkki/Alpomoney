@@ -1,4 +1,4 @@
-import { PrismaClient, Storage } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
@@ -7,9 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeStorage, setStorages } from "../../features/storagesSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
+import { NewStorageDialog } from "../../components/NewStorageDialog";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     dispatch(setStorages(props.storages));
@@ -17,10 +19,12 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
 
   const storages = useSelector((state: RootState) => state.storages.storages);
 
-  const [name, setName] = useState("");
-
   return <>
     <h1>Storages</h1>
+    <button onClick={() => setDialogOpen(true)}>
+      New storage
+    </button>
+    <NewStorageDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <table>
       <thead>
         <tr>
@@ -42,14 +46,6 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         </tr>)}
       </tbody>
     </table>
-    <form onSubmit={async (e) => {
-      e.preventDefault();
-      const response = await axios.post<Storage>("/api/storages", { name });
-      dispatch(setStorages([...storages, { ...response.data, sum: 0 }]));
-    }}>
-      <input type="text" value={name} onChange={e => setName(e.target.value)} />
-      <button type="submit">Submit</button>
-    </form>
   </>
 }
 

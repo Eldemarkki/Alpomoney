@@ -82,12 +82,29 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     },
   });
 
+  // TODO: Fix this n+1 problem
+  const storagesWithSum = await Promise.all(storages.map(async storage => {
+    const sum = await prisma.transaction.aggregate({
+      _sum: {
+        amount: true
+      },
+      where: {
+        storageId: storage.id
+      }
+    });
+
+    return {
+      ...storage,
+      sum: sum._sum.amount || 0
+    }
+  }))
+
   const returnValue = {
     props: {
       transactions: transactions.map(t => ({ ...t, createdAt: t.createdAt.getTime() })),
       user,
       sinks,
-      storages
+      storages: storagesWithSum
     }
   };
   return returnValue;

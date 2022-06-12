@@ -9,7 +9,7 @@ import { setStorages } from '../features/storagesSlice';
 import { sessionSettings } from '../sessions/ironSessionSettings';
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -21,10 +21,10 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
 
   return <div>
     <h1>Dashboard</h1>
-    <button onClick={() => setTransactionModalOpen(true)}>
+    <button onClick={() => setDialogOpen(true)}>
       New transaction
     </button>
-    <NewTransactionDialog open={transactionModalOpen} onClose={() => setTransactionModalOpen(false)} />
+    <NewTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <div>
       <h2>My Storages</h2>
       <table>
