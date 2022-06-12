@@ -27,6 +27,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
   const [sinkId, setSinkId] = useState(undefined);
   const [storageId, setStorageId] = useState(undefined);
   const [frequency, setFrequency] = useState<RecurringTransactionFrequency>("MONTHLY");
+  const [category, setCategory] = useState("");
 
   const dispatch = useDispatch();
 
@@ -38,7 +39,8 @@ export const NewRecurringTransactionForm = (props: Props) => {
       description,
       sinkId,
       storageId,
-      frequency
+      frequency,
+      category
     });
 
     dispatch(addRecurringTransaction(response.data));
@@ -97,6 +99,10 @@ export const NewRecurringTransactionForm = (props: Props) => {
               {availableStorages.map(storage => <option key={storage.id} value={storage.id}>{storage.name}</option>)}
             </select>
           </td>
+        </tr>
+        <tr>
+          <td><label htmlFor="category">Category</label></td>
+          <td><input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} /></td>
         </tr>
       </tbody>
     </table>

@@ -21,19 +21,21 @@ model Sink {
   name                 String
   Transactions         Transaction[]
   RecurringTransaction RecurringTransaction[]
+  defaultCategory      String                 @default("Uncategorized")
 }
 
 model Transaction {
   id          String   @id @default(cuid())
   description String?
   amount      Int
-  Sink        Sink     @relation(fields: [sinkId], references: [id])
-  sinkId      String
+  Sink        Sink?    @relation(fields: [sinkId], references: [id])
+  sinkId      String?
   User        User     @relation(fields: [userId], references: [id])
   userId      String
-  Storage     Storage  @relation(fields: [storageId], references: [id])
-  storageId   String
+  Storage     Storage? @relation(fields: [storageId], references: [id])
+  storageId   String?
   createdAt   DateTime @default(now())
+  category    String   @default("Uncategorized")
 }
 
 model Storage {
@@ -66,4 +68,5 @@ model RecurringTransaction {
   Storage     Storage                       @relation(fields: [storageId], references: [id])
   storageId   String
   frequency   RecurringTransactionFrequency
+  category    String                        @default("Uncategorized")
 }

@@ -1,18 +1,22 @@
-import { PrismaClient, Storage, User } from "@prisma/client";
+import { PrismaClient, Storage } from "@prisma/client";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { useDispatch, useSelector } from "react-redux";
+import { removeStorage, setStorages } from "../../features/storagesSlice";
+import { RootState } from "../../app/store";
+import { InferGetServerSidePropsType } from "next";
 
-type StorageWithSum = Storage & { sum: number };
+export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const dispatch = useDispatch();
 
-interface Props {
-  storages: StorageWithSum[],
-  user: Omit<User, "passwordHash">,
-}
+  useEffect(() => {
+    dispatch(setStorages(props.storages));
+  }, [dispatch, props.storages]);
 
-export default function Storages(props: Props) {
-  const [storages, setStorages] = useState(props.storages);
+  const storages = useSelector((state: RootState) => state.storages.storages);
+
   const [name, setName] = useState("");
 
   return <>
@@ -22,19 +26,26 @@ export default function Storages(props: Props) {
         <tr>
           <th style={{ paddingRight: 30 }}>Name</th>
           <th>Sum</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        {[...props.storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
+        {[...storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
           <td>{storage.name}</td>
           <td align='right'>{storage.sum}€</td>
+          <td>
+            <button onClick={async () => {
+              await axios.delete(`/api/storages/${storage.id}`);
+              dispatch(removeStorage(storage.id));
+            }}>Delete</button>
+          </td>
         </tr>)}
       </tbody>
     </table>
     <form onSubmit={async (e) => {
       e.preventDefault();
       const response = await axios.post<Storage>("/api/storages", { name });
-      setStorages([...storages, { ...response.data, sum: 0 }]);
+      dispatch(setStorages([...storages, { ...response.data, sum: 0 }]));
     }}>
       <input type="text" value={name} onChange={e => setName(e.target.value)} />
       <button type="submit">Submit</button>

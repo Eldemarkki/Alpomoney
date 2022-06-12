@@ -95,6 +95,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           <th>Price (weekly)</th>
           <th>Price (monthly)</th>
           <th>Price (yearly)</th>
+          <th>Category</th>
           <th></th>
         </tr>
       </thead>
@@ -108,6 +109,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
             <td>{costs.weekly}€</td>
             <td>{costs.monthly}€</td>
             <td>{costs.yearly}€</td>
+            <td>{recurringTransaction.category}</td>
             <td><button onClick={async () => {
               await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`)
               dispatch(setRecurringTransactions(recurringTransactions.filter(rt => rt.id !== recurringTransaction.id)))

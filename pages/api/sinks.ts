@@ -1,9 +1,10 @@
+import { PrismaClient } from "@prisma/client";
 import { NextApiHandler } from "next";
-import { createSink, getAllSinks } from "../../lib/sinks";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
-    const sinks = getAllSinks();
+    const prisma = new PrismaClient();
+    const sinks = await prisma.sink.findMany({});
     res.status(200).json(sinks);
   }
   else if (req.method === "POST") {
@@ -15,7 +16,12 @@ const handler: NextApiHandler = async (req, res) => {
       });
     }
 
-    const sink = await createSink(body.name);
+    const prisma = new PrismaClient();
+    const sink = await prisma.sink.create({
+      data: {
+        name: body.name,
+      }
+    })
 
     res.status(200).json(sink);
   }

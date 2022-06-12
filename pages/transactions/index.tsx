@@ -38,8 +38,8 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
         {transactions.map(transaction => <tr key={transaction.id}>
           <td>{transaction.amount}€</td>
           <td>{transaction.description || <i>No description</i>}</td>
-          <td>{transaction.Sink.name}</td>
-          <td>{transaction.Storage.name}</td>
+          <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
+          <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
           <td>{new Date(transaction.createdAt).toLocaleString()}</td>
           <td><button onClick={async () => {
             await axios.delete(`/api/transactions/${transaction.id}`);

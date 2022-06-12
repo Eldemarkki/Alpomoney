@@ -1,12 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
-import { getAllStorages } from "../../lib/storages";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
-    const storages = getAllStorages();
+    const prisma = new PrismaClient();
+    const storages = await prisma.storage.findMany({});
+
     res.status(200).json(storages);
   }
   else if (req.method === "POST") {
