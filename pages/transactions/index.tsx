@@ -74,6 +74,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           <th>Sink</th>
           <th>Storage</th>
           <th>Created at</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -83,6 +84,10 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           <td>{transaction.Sink.name}</td>
           <td>{transaction.Storage.name}</td>
           <td>{new Date(transaction.createdAt).toLocaleString()}</td>
+          <td><button onClick={async () => {
+            await axios.delete(`/api/transactions/${transaction.id}`);
+            setTransactions(transactions.filter(t => t.id !== transaction.id));
+          }}>Delete</button></td>
         </tr>)}
       </tbody>
     </table>
