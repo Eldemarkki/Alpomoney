@@ -1,47 +1,82 @@
-import { GetServerSideProps } from 'next'
-import Head from 'next/head'
-import { Sink } from '@prisma/client';
-import { useState } from 'react';
-import axios from "axios";
-import { getAllSinks } from '../lib/sinks';
+import { PrismaClient } from '@prisma/client';
+import { withIronSessionSsr } from 'iron-session/next';
+import { InferGetServerSidePropsType } from 'next'
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { NewTransactionDialog } from '../components/NewTransactionDialog';
+import { setSinks } from '../features/sinksSlice';
+import { setStorages } from '../features/storagesSlice';
+import { sessionSettings } from '../sessions/ironSessionSettings';
 
-interface Props {
-  sinks: Sink[]
-}
+export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false);
 
-const SinkForm = () => {
-  const [name, setName] = useState('');
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setSinks(props.sinks));
+  });
+  useEffect(() => {
+    dispatch(setStorages(props.storages));
+  });
+
   return <div>
-    <input type="text" value={name} onChange={e => setName(e.target.value)} />
-    <button onClick={() => {
-      axios.post<Sink>("/api/sinks", { name })
-        .then((response) => {
-          console.log(response.data)
-        });
-      console.log(name);
-    }}>
-      Submit
+    <h1>Dashboard</h1>
+    <button onClick={() => setTransactionModalOpen(true)}>
+      New transaction
     </button>
-  </div>
-};
-
-export default function Home(props: Props) {
-  return (
+    <NewTransactionDialog open={transactionModalOpen} onClose={() => setTransactionModalOpen(false)} />
     <div>
-      <Head>
-        <title>Expenseer</title>
-        <meta name="description" content="Expenseer" />
-      </Head>
+      <h2>My Storages</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ paddingRight: 30 }}>Name</th>
+            <th>Sum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...props.storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
+            <td>{storage.name}</td>
+            <td align='right'>{storage.sum}€</td>
+          </tr>)}
+        </tbody>
+      </table>
     </div>
-  )
+  </div>
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const sinks = await getAllSinks();
+export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
+  const prisma = new PrismaClient();
+
+  const sinks = await prisma.sink.findMany({});
+
+  const storages = await prisma.storage.findMany({
+    where: {
+      userId: req.session.user.id
+    }
+  });
+
+  // TODO: Fix this n+1 problem
+  const storagesWithSum = await Promise.all(storages.map(async storage => {
+    const sum = await prisma.transaction.aggregate({
+      _sum: {
+        amount: true
+      },
+      where: {
+        storageId: storage.id
+      }
+    });
+
+    return {
+      ...storage,
+      sum: sum._sum.amount || 0
+    }
+  }))
 
   return {
     props: {
-      sinks
+      sinks,
+      storages: storagesWithSum
     }
   }
-}
+}, sessionSettings);

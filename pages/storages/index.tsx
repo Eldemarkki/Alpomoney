@@ -17,9 +17,20 @@ export default function Storages(props: Props) {
 
   return <>
     <h1>Storages</h1>
-    {storages.map(storage => {
-      return <div key={storage.id}>{storage.name} ({storage.sum})</div>;
-    })}
+    <table>
+      <thead>
+        <tr>
+          <th style={{ paddingRight: 30 }}>Name</th>
+          <th>Sum</th>
+        </tr>
+      </thead>
+      <tbody>
+        {[...props.storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
+          <td>{storage.name}</td>
+          <td align='right'>{storage.sum}€</td>
+        </tr>)}
+      </tbody>
+    </table>
     <form onSubmit={async (e) => {
       e.preventDefault();
       const response = await axios.post<Storage>("/api/storages", { name });

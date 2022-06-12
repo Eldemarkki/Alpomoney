@@ -14,6 +14,7 @@ const Header = styled.header`
 export const Layout = (props: PropsWithChildren) => {
   return <Container>
     <Header>
+      <Link href="/">Dashboard</Link>
       <Link href="/transactions">Transactions</Link>
       <Link href="/storages">Storages</Link>
       <Link href="/sinks">Sinks</Link>
