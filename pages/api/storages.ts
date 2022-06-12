@@ -28,7 +28,8 @@ const handler: NextApiHandler = async (req, res) => {
     const storage = await prisma.storage.create({
       data: {
         name: body.name,
-        userId: req.session.user.id
+        userId: req.session.user.id,
+        startAmount: body.startAmount || 0,
       }
     })
 

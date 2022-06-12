@@ -7,6 +7,7 @@ import { NewTransactionDialog } from '../components/NewTransactionDialog';
 import { setSinks } from '../features/sinksSlice';
 import { setStorages } from '../features/storagesSlice';
 import { sessionSettings } from '../sessions/ironSessionSettings';
+import { getStoragesWithSum } from '../utils/storageUtils';
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -56,22 +57,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     }
   });
 
-  // TODO: Fix this n+1 problem
-  const storagesWithSum = await Promise.all(storages.map(async storage => {
-    const sum = await prisma.transaction.aggregate({
-      _sum: {
-        amount: true
-      },
-      where: {
-        storageId: storage.id
-      }
-    });
-
-    return {
-      ...storage,
-      sum: sum._sum.amount || 0
-    }
-  }))
+  const storagesWithSum = await getStoragesWithSum(storages, prisma);
 
   return {
     props: {

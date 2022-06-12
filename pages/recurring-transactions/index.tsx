@@ -10,6 +10,7 @@ import { setRecurringTransactions } from "../../features/recurringTransactionsSl
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { getStoragesWithSum } from "../../utils/storageUtils";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -132,23 +133,7 @@ export const getServerSideProps = withIronSessionSsr(
 
     const sinks = await prisma.sink.findMany({});
     const storages = await prisma.storage.findMany({});
-
-    // TODO: Fix this n+1 problem
-    const storagesWithSum = await Promise.all(storages.map(async storage => {
-      const sum = await prisma.transaction.aggregate({
-        _sum: {
-          amount: true
-        },
-        where: {
-          storageId: storage.id
-        }
-      });
-
-      return {
-        ...storage,
-        sum: sum._sum.amount || 0
-      }
-    }))
+    const storagesWithSum = await getStoragesWithSum(storages, prisma);
 
     return {
       props: {

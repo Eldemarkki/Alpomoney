@@ -8,6 +8,7 @@ import { removeStorage, setStorages } from "../../features/storagesSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
+import { getStoragesWithSum } from "../../utils/storageUtils";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
@@ -55,24 +56,9 @@ export const getServerSideProps = withIronSessionSsr(
 
     const prisma = new PrismaClient();
 
-    // TODO: Fix this n+1 problem
     const storages = await prisma.storage.findMany({});
 
-    const storagesWithSum = await Promise.all(storages.map(async storage => {
-      const sum = await prisma.transaction.aggregate({
-        _sum: {
-          amount: true
-        },
-        where: {
-          storageId: storage.id
-        }
-      });
-
-      return {
-        ...storage,
-        sum: sum._sum.amount || 0
-      }
-    }))
+    const storagesWithSum = await getStoragesWithSum(storages, prisma);
 
     return {
       props: {
