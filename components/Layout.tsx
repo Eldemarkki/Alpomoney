@@ -17,6 +17,8 @@ export const Layout = (props: PropsWithChildren) => {
       <Link href="/transactions">Transactions</Link>
       <Link href="/storages">Storages</Link>
       <Link href="/sinks">Sinks</Link>
+      <Link href="/login">Login</Link>
+      <Link href="/register">Register</Link>
     </Header>
     <main>
       {props.children}
