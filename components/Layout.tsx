@@ -16,6 +16,7 @@ export const Layout = (props: PropsWithChildren) => {
     <Header>
       <Link href="/">Dashboard</Link>
       <Link href="/transactions">Transactions</Link>
+      <Link href="/recurring-transactions">Recurring transactions</Link>
       <Link href="/storages">Storages</Link>
       <Link href="/sinks">Sinks</Link>
       <Link href="/login">Login</Link>
