@@ -1,6 +1,5 @@
 import { PrismaClient, Storage, User } from "@prisma/client";
 import axios from "axios";
-import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
@@ -12,38 +11,25 @@ interface Props {
   user: Omit<User, "passwordHash">,
 }
 
-interface StorageFormProps {
-  onSubmit: (name: string) => Promise<void>
-}
-
-const StorageForm = (props: StorageFormProps) => {
-  const [name, setName] = useState("");
-
-  return <form onSubmit={(e) => {
-    e.preventDefault();
-    props.onSubmit(name);
-  }}>
-    <input type="text" value={name} onChange={e => setName(e.target.value)} />
-    <button type="submit">Submit</button>
-  </form>;
-};
-
 export default function Storages(props: Props) {
   const [storages, setStorages] = useState(props.storages);
+  const [name, setName] = useState("");
 
   return <>
     <h1>Storages</h1>
-    {props.storages.map(storage => {
+    {storages.map(storage => {
       return <div key={storage.id}>{storage.name} ({storage.sum})</div>;
     })}
-    <p>Hello! {props.user.name} {props.user.id}</p>
-    <StorageForm onSubmit={async (name) => {
-      const newStorage = await axios.post<Storage>("/api/storages", { name, userId: "hmm" });
-      setStorages([...storages, { ...newStorage.data, sum: 0 }]);
-    }} />
+    <form onSubmit={async (e) => {
+      e.preventDefault();
+      const response = await axios.post<Storage>("/api/storages", { name });
+      setStorages([...storages, { ...response.data, sum: 0 }]);
+    }}>
+      <input type="text" value={name} onChange={e => setName(e.target.value)} />
+      <button type="submit">Submit</button>
+    </form>
   </>
 }
-
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -66,7 +52,7 @@ export const getServerSideProps = withIronSessionSsr(
 
       return {
         ...storage,
-        sum: sum._sum.amount
+        sum: sum._sum.amount || 0
       }
     }))
 

@@ -15,7 +15,7 @@ const handler: NextApiHandler = async (req, res) => {
       });
     }
 
-    const sink = createSink(body.name);
+    const sink = await createSink(body.name);
 
     res.status(200).json(sink);
   }

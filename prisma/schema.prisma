@@ -24,14 +24,16 @@ model Sink {
 }
 
 model Transaction {
-  id        String  @id @default(cuid())
-  amount    Int
-  Sink      Sink    @relation(fields: [sinkId], references: [id])
-  sinkId    String
-  User      User    @relation(fields: [userId], references: [id])
-  userId    String
-  Storage   Storage @relation(fields: [storageId], references: [id])
-  storageId String
+  id          String   @id @default(cuid())
+  description String?
+  amount      Int
+  Sink        Sink     @relation(fields: [sinkId], references: [id])
+  sinkId      String
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
+  Storage     Storage  @relation(fields: [storageId], references: [id])
+  storageId   String
+  createdAt   DateTime @default(now())
 }
 
 model Storage {

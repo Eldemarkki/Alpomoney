@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { getAllStorages } from "../../lib/storages";
+import { sessionSettings } from "../../sessions/ironSessionSettings";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
@@ -10,15 +12,14 @@ const handler: NextApiHandler = async (req, res) => {
   else if (req.method === "POST") {
     const { body } = req;
 
+    if (!req.session.user) {
+      res.status(401).json({ error: "You must be logged in to create a storage" });
+      return;
+    }
+
     if (!body.name) {
       return res.status(400).json({
         error: "Name is required"
-      });
-    }
-
-    if (!body.userId) {
-      return res.status(400).json({
-        error: "UserId is required"
       });
     }
 
@@ -26,7 +27,7 @@ const handler: NextApiHandler = async (req, res) => {
     const storage = await prisma.storage.create({
       data: {
         name: body.name,
-        userId: body.userId
+        userId: req.session.user.id
       }
     })
 
@@ -37,4 +38,4 @@ const handler: NextApiHandler = async (req, res) => {
   }
 };
 
-export default handler;
+export default withIronSessionApiRoute(handler, sessionSettings);
