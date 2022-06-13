@@ -12,8 +12,8 @@ function MyApp({ Component, pageProps }) {
 
   return <>
     <Head>
-      <title>Expenseer</title>
-      <meta name="description" content="Expenseer" />
+      <title>Alpomoney</title>
+      <meta name="description" content="Alpomoney" />
     </Head>
     <Provider store={store}>
       <UserContext.Provider value={{ user, setUser }}>

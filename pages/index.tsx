@@ -8,7 +8,6 @@ import { setSinks } from '../features/sinksSlice';
 import { setStorages } from '../features/storagesSlice';
 import { sessionSettings } from '../sessions/ironSessionSettings';
 import { moneyToString } from '../utils/moneyUtils';
-import { getStoragesWithSum } from '../utils/storageUtils';
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -34,12 +33,14 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
           <tr>
             <th style={{ paddingRight: 30 }}>Name</th>
             <th>Sum</th>
+            <th>Spent this month</th>
           </tr>
         </thead>
         <tbody>
-          {[...props.storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
+          {[...props.storages].sort((a, b) => props.totalSums[b.id] - props.totalSums[a.id]).map(storage => <tr key={storage.id}>
             <td>{storage.name}</td>
-            <td align='right'>{moneyToString(storage.sum)}</td>
+            <td align='right'>{moneyToString(props.totalSums[storage.id])}</td>
+            <td align="right" style={{ color: "red" }}>{moneyToString(-props.spentThisMonth[storage.id])}</td>
           </tr>)}
         </tbody>
       </table>
@@ -48,6 +49,16 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
 }
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
+  if (!req.session.user) {
+    return {
+      redirect: {
+        destination: "/login",
+        statusCode: 302,
+        permanent: false
+      }
+    }
+  }
+
   const prisma = new PrismaClient();
 
   const sinks = await prisma.sink.findMany({});
@@ -58,12 +69,56 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     }
   });
 
-  const storagesWithSum = await getStoragesWithSum(storages, prisma);
+  const totalSums: Record<string, number> = {};
+  for (const storage of storages) {
+    const sum = await prisma.transaction.aggregate({
+      where: {
+        storageId: storage.id,
+      },
+      _sum: {
+        amount: true
+      }
+    });
+    totalSums[storage.id] = (storage.startAmount || 0) - (sum._sum.amount || 0);
+  }
+
+  const recurringMonthlyExpenses: Record<string, number> = {};
+  for (const storage of storages) {
+    const expenses = await prisma.recurringTransaction.aggregate({
+      where: {
+        storageId: storage.id,
+      },
+      _sum: {
+        amount: true
+      }
+    })
+    recurringMonthlyExpenses[storage.id] = expenses._sum.amount || 0;
+  }
+
+  const spentThisMonth: Record<string, number> = {};
+  for (const storage of storages) {
+    const spent = await prisma.transaction.aggregate({
+      where: {
+        storageId: storage.id,
+        createdAt: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lte: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+        }
+      },
+      _sum: {
+        amount: true
+      }
+    });
+    spentThisMonth[storage.id] = spent._sum.amount || 0;
+  }
 
   return {
     props: {
       sinks,
-      storages: storagesWithSum
+      storages,
+      recurringMonthlyExpenses,
+      spentThisMonth,
+      totalSums
     }
   }
 }, sessionSettings);

@@ -1,4 +1,4 @@
-# Expenseer
+# Alpomoney
 
 This is a personal finance tracker developed with React, Next.js and Prisma.
 

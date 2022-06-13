@@ -1,9 +1,11 @@
+import { Storage } from '@prisma/client';
 import * as Dialog from '@radix-ui/react-dialog';
 import { NewStorageForm } from './NewStorageForm';
 
 interface Props {
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onCreate: (storage: Storage) => void
 }
 
 export const NewStorageDialog = (props: Props) => {
@@ -35,7 +37,10 @@ export const NewStorageDialog = (props: Props) => {
         Close
       </Dialog.Close>
       <Dialog.Title>New storage</Dialog.Title>
-      <NewStorageForm onCreate={() => props.onClose()} />
+      <NewStorageForm onCreate={(storage) => {
+        props.onCreate(storage);
+        props.onClose();
+      }} />
     </Dialog.Content>
   </Dialog.Root>;
 }

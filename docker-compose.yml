@@ -7,4 +7,4 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: verysecretpassword1234
-      POSTGRES_DB: expenseer
+      POSTGRES_DB: alpomoney

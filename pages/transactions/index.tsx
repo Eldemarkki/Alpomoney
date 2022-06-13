@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux'
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
-import { getStoragesWithSum } from "../../utils/storageUtils";
 import { moneyToString } from "../../utils/moneyUtils";
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -84,14 +83,11 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     },
   });
 
-  const storagesWithSum = await getStoragesWithSum(storages, prisma);
-
   const returnValue = {
     props: {
       transactions: transactions.map(t => ({ ...t, createdAt: t.createdAt.getTime() })),
-      user,
       sinks,
-      storages: storagesWithSum
+      storages,
     }
   };
   return returnValue;

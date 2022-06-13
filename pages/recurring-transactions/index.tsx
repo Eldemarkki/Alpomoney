@@ -11,7 +11,6 @@ import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
 import { moneyToString } from "../../utils/moneyUtils";
-import { getStoragesWithSum } from "../../utils/storageUtils";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -134,13 +133,12 @@ export const getServerSideProps = withIronSessionSsr(
 
     const sinks = await prisma.sink.findMany({});
     const storages = await prisma.storage.findMany({});
-    const storagesWithSum = await getStoragesWithSum(storages, prisma);
 
     return {
       props: {
         recurringTransactions,
         sinks,
-        storages: storagesWithSum
+        storages
       }
     }
   },

@@ -2,11 +2,11 @@ import { Storage } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addStorage, StorageWithSum } from "../features/storagesSlice";
+import { addStorage } from "../features/storagesSlice";
 import { centify } from "../utils/moneyUtils";
 
 interface Props {
-  onCreate: (storage: StorageWithSum) => void
+  onCreate: (storage: Storage) => void
 }
 
 export const NewStorageForm = (props: Props) => {
@@ -21,9 +21,9 @@ export const NewStorageForm = (props: Props) => {
       name,
       startAmount: centify(startAmount),
     });
-    const storage = { ...response.data, sum: centify(startAmount) };
-    dispatch(addStorage(storage));
-    props.onCreate(storage);
+
+    dispatch(addStorage(response.data));
+    props.onCreate(response.data);
   }}>
     <table>
       <tbody>

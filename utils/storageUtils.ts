@@ -1,23 +1,43 @@
-import { PrismaClient, Storage } from "@prisma/client";
-import { StorageWithSum } from "../features/storagesSlice";
+import { PrismaClient } from "@prisma/client";
 
-export const getStoragesWithSum = async (storages: Storage[], prisma: PrismaClient): Promise<StorageWithSum[]> => {
-  // TODO: Fix this n+1 problem
-  const storagesWithSum = await Promise.all(storages.map(async storage => {
-    const sum = await prisma.transaction.aggregate({
-      _sum: {
-        amount: true
-      },
-      where: {
-        storageId: storage.id
-      }
-    });
-
-    return {
-      ...storage,
-      sum: (sum._sum.amount || 0) + (storage.startAmount || 0)
+export const getTransactionSum = async (storageId: string, prisma: PrismaClient): Promise<number> => {
+  const sum = await prisma.transaction.aggregate({
+    _sum: {
+      amount: true
+    },
+    where: {
+      storageId
     }
-  }))
+  });
 
-  return storagesWithSum;
+  return sum._sum.amount || 0;
 };
+
+export const getTransactionSums = async (storageIds: string[], prisma: PrismaClient) => {
+  const sums: Record<string, number> = {};
+  for (const storageId of storageIds) {
+    sums[storageId] = await getTransactionSum(storageId, prisma);
+  }
+  return sums;
+}
+
+export const getRecurringMonthlyExpenses = async (storageId: string, prisma: PrismaClient): Promise<number> => {
+  const monthlyExpenses = await prisma.recurringTransaction.aggregate({
+    where: {
+      storageId
+    },
+    _sum: {
+      amount: true
+    }
+  });
+
+  return monthlyExpenses._sum.amount || 0;
+};
+
+export const getRecurringMonthlyExpensesMultiple = async (storageIds: string[], prisma: PrismaClient) => {
+  const monthlyExpenses: Record<string, number> = {};
+  for (const storageId of storageIds) {
+    monthlyExpenses[storageId] = await getRecurringMonthlyExpenses(storageId, prisma);
+  }
+  return monthlyExpenses;
+}

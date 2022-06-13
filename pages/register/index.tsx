@@ -1,19 +1,21 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(username, password);
     try {
-      const response = await axios.post<{ token: string }>("/api/register", {
+      await axios.post<{ token: string }>("/api/register", {
         username,
         password
       });
-      response.data.token
+      router.push("/");
     }
     catch {
       console.log("Failed to register");
