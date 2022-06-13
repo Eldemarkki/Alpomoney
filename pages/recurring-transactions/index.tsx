@@ -10,6 +10,7 @@ import { setRecurringTransactions } from "../../features/recurringTransactionsSl
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { moneyToString } from "../../utils/moneyUtils";
 import { getStoragesWithSum } from "../../utils/storageUtils";
 
 const assertNever = (value: never): never => {
@@ -106,10 +107,10 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           return <tr key={recurringTransaction.id}>
             <td>{recurringTransaction.name}</td>
             <td>{formatFrequency(recurringTransaction.frequency)}</td>
-            <td>{costs.daily}€</td>
-            <td>{costs.weekly}€</td>
-            <td>{costs.monthly}€</td>
-            <td>{costs.yearly}€</td>
+            <td>{moneyToString(costs.daily)}</td>
+            <td>{moneyToString(costs.weekly)}</td>
+            <td>{moneyToString(costs.monthly)}</td>
+            <td>{moneyToString(costs.yearly)}</td>
             <td>{recurringTransaction.category}</td>
             <td><button onClick={async () => {
               await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`)

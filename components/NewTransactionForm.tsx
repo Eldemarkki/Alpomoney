@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
+import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 
 interface Props {
@@ -28,7 +29,7 @@ export const NewTransactionForm = (props: Props) => {
   return <form onSubmit={async (e) => {
     e.preventDefault();
     const response = await axios.post<ConvertDates<Transaction>>("/api/transactions", {
-      amount,
+      amount: centify(amount),
       description,
       sinkId,
       storageId
@@ -50,7 +51,7 @@ export const NewTransactionForm = (props: Props) => {
       <tbody>
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
-          <td><input type="number" id="amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></td>
+          <td><input type="number" step={0.01} id="amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></td>
         </tr>
         <tr>
           <td><label htmlFor="description">Description</label></td>

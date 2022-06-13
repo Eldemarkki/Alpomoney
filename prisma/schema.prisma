@@ -61,12 +61,12 @@ model RecurringTransaction {
   amount      Int
   name        String
   description String?
-  Sink        Sink                          @relation(fields: [sinkId], references: [id])
-  sinkId      String
+  Sink        Sink?                         @relation(fields: [sinkId], references: [id])
+  sinkId      String?
   User        User                          @relation(fields: [userId], references: [id])
   userId      String
-  Storage     Storage                       @relation(fields: [storageId], references: [id])
-  storageId   String
+  Storage     Storage?                      @relation(fields: [storageId], references: [id])
+  storageId   String?
   frequency   RecurringTransactionFrequency
   category    String                        @default("Uncategorized")
 }

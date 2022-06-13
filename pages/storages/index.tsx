@@ -9,6 +9,7 @@ import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
 import { getStoragesWithSum } from "../../utils/storageUtils";
+import { moneyToString } from "../../utils/moneyUtils";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
 
   return <>
     <h1>Storages</h1>
+    <p>Total value: {moneyToString(storages.reduce((prev, curr) => prev + curr.sum, 0))}</p>
     <button onClick={() => setDialogOpen(true)}>
       New storage
     </button>
@@ -37,7 +39,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
       <tbody>
         {[...storages].sort((a, b) => b.sum - a.sum).map(storage => <tr key={storage.id}>
           <td>{storage.name}</td>
-          <td align='right'>{storage.sum}€</td>
+          <td align='right'>{moneyToString(storage.sum)}</td>
           <td>
             <button onClick={async () => {
               await axios.delete(`/api/storages/${storage.id}`);

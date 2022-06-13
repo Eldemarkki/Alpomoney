@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { addRecurringTransaction } from "../features/recurringTransactionsSlice";
+import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 
 interface Props {
@@ -35,7 +36,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
     e.preventDefault();
     const response = await axios.post<ConvertDates<RecurringTransaction>>("/api/recurringTransactions", {
       name,
-      amount,
+      amount: centify(amount),
       description,
       sinkId,
       storageId,
@@ -65,7 +66,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
         </tr>
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
-          <td><input type="number" id="amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></td>
+          <td><input type="number" step={0.01} id="amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></td>
         </tr>
         <tr>
           <td><label htmlFor="description">Description</label></td>

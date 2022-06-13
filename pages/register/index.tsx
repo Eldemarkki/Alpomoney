@@ -9,7 +9,10 @@ export default function RegisterPage() {
     e.preventDefault();
     console.log(username, password);
     try {
-      const response = await axios.post<{ token: string }>("/api/register", { username, password });
+      const response = await axios.post<{ token: string }>("/api/register", {
+        username,
+        password
+      });
       response.data.token
     }
     catch {

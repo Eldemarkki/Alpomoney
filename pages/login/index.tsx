@@ -9,7 +9,10 @@ export default function LoginPage() {
     e.preventDefault();
     console.log(username, password);
     try {
-      const response = await axios.post<{ token: string }>("/api/login", { username, password });
+      const response = await axios.post<{ token: string }>("/api/login", {
+        username,
+        password
+      });
       response.data.token
     }
     catch {

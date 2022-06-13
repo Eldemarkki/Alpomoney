@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addStorage, StorageWithSum } from "../features/storagesSlice";
+import { centify } from "../utils/moneyUtils";
 
 interface Props {
   onCreate: (storage: StorageWithSum) => void
@@ -18,9 +19,9 @@ export const NewStorageForm = (props: Props) => {
     e.preventDefault();
     const response = await axios.post<Storage>("/api/storages", {
       name,
-      startAmount
+      startAmount: centify(startAmount),
     });
-    const storage = { ...response.data, sum: startAmount };
+    const storage = { ...response.data, sum: centify(startAmount) };
     dispatch(addStorage(storage));
     props.onCreate(storage);
   }}>
@@ -32,7 +33,7 @@ export const NewStorageForm = (props: Props) => {
         </tr>
         <tr>
           <td><label htmlFor="sum">Sum</label></td>
-          <td><input type="number" id="sum" value={startAmount} onChange={e => setSum(Number(e.target.value))} /></td>
+          <td><input type="number" step={0.01} id="sum" value={startAmount} onChange={e => setSum(Number(e.target.value))} /></td>
         </tr>
       </tbody>
     </table>

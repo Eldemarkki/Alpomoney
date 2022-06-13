@@ -39,7 +39,9 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
     </table>
     <form onSubmit={async (e) => {
       e.preventDefault();
-      const response = await axios.post<Sink>("/api/sinks", { name });
+      const response = await axios.post<Sink>("/api/sinks", {
+        name
+      });
       dispatch(addSink(response.data));
     }}>
       <input type="text" value={name} onChange={e => setName(e.target.value)} />

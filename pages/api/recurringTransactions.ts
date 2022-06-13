@@ -43,6 +43,7 @@ const handler: NextApiHandler = async (req, res) => {
         frequency: body.frequency,
         sinkId: body.sinkId,
         storageId: body.storageId,
+        category: body.category,
         userId: req.session.user.id,
       }
     })

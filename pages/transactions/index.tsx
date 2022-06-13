@@ -9,6 +9,7 @@ import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
 import { getStoragesWithSum } from "../../utils/storageUtils";
+import { moneyToString } from "../../utils/moneyUtils";
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
@@ -37,7 +38,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
       </thead>
       <tbody>
         {transactions.map(transaction => <tr key={transaction.id}>
-          <td>{transaction.amount}€</td>
+          <td>{moneyToString(transaction.amount)}</td>
           <td>{transaction.description || <i>No description</i>}</td>
           <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
           <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
