@@ -53,7 +53,6 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     return {
       redirect: {
         destination: "/login",
-        statusCode: 302,
         permanent: false
       }
     }
