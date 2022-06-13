@@ -45,6 +45,7 @@ const handler: NextApiHandler = async (req, res) => {
         storageId: body.storageId,
         category: body.category,
         userId: req.session.user.id,
+        startDate: new Date(body.startDate),
       }
     })
 

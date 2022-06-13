@@ -29,6 +29,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
   const [storageId, setStorageId] = useState(undefined);
   const [frequency, setFrequency] = useState<RecurringTransactionFrequency>("MONTHLY");
   const [category, setCategory] = useState("");
+  const [nextDate, setNextDate] = useState(new Date());
 
   const dispatch = useDispatch();
 
@@ -41,7 +42,8 @@ export const NewRecurringTransactionForm = (props: Props) => {
       sinkId,
       storageId,
       frequency,
-      category
+      category,
+      startDate: nextDate.getTime()
     });
 
     dispatch(addRecurringTransaction(response.data));
@@ -104,6 +106,17 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="category">Category</label></td>
           <td><input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} /></td>
+        </tr>
+        <tr>
+          <td><label htmlFor="nextDate">Next date</label></td>
+          <td><input type="date" id="nextDate" value={(!isNaN(nextDate.getTime()) ? nextDate : new Date()).toISOString().slice(0, 10)} onChange={(e) => {
+            try {
+              setNextDate(new Date(e.target.value));
+            }
+            catch (e) {
+              setNextDate(new Date());
+            }
+          }} /></td>
         </tr>
       </tbody>
     </table>

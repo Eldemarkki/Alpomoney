@@ -72,4 +72,5 @@ model RecurringTransaction {
   storageId   String?
   frequency   RecurringTransactionFrequency
   category    String                        @default("Uncategorized")
+  startDate   DateTime                      @default(now())
 }

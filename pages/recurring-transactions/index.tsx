@@ -97,6 +97,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           <th>Price (monthly)</th>
           <th>Price (yearly)</th>
           <th>Category</th>
+          <th>Next date</th>
           <th></th>
         </tr>
       </thead>
@@ -111,6 +112,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
             <td>{moneyToString(costs.monthly)}</td>
             <td>{moneyToString(costs.yearly)}</td>
             <td>{recurringTransaction.category}</td>
+            <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
             <td><button onClick={async () => {
               await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`)
               dispatch(setRecurringTransactions(recurringTransactions.filter(rt => rt.id !== recurringTransaction.id)))
@@ -136,7 +138,7 @@ export const getServerSideProps = withIronSessionSsr(
 
     return {
       props: {
-        recurringTransactions,
+        recurringTransactions: recurringTransactions.map(rt => ({ ...rt, startDate: rt.startDate.getTime() })),
         sinks,
         storages
       }
