@@ -53,6 +53,14 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false
+        }
+      }
+    }
 
     const prisma = new PrismaClient();
 

@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
+import { sessionSettings } from "../../sessions/ironSessionSettings";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
@@ -8,6 +10,11 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(200).json(sinks);
   }
   else if (req.method === "POST") {
+    const user = req.session.user;
+    if (!user) {
+      return res.status(401).json({ error: "Not logged in" });
+    }
+
     const { body } = req;
 
     if (!body.name) {
@@ -20,6 +27,7 @@ const handler: NextApiHandler = async (req, res) => {
     const sink = await prisma.sink.create({
       data: {
         name: body.name,
+        userId: user.id
       }
     })
 
@@ -30,4 +38,4 @@ const handler: NextApiHandler = async (req, res) => {
   }
 };
 
-export default handler;
+export default withIronSessionApiRoute(handler, sessionSettings);

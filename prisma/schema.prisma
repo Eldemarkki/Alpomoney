@@ -13,6 +13,7 @@ model User {
   Transaction          Transaction[]
   Storages             Storage[]
   RecurringTransaction RecurringTransaction[]
+  Sinks                Sink[]
   passwordHash         String
 }
 
@@ -22,6 +23,8 @@ model Sink {
   Transactions         Transaction[]
   RecurringTransaction RecurringTransaction[]
   defaultCategory      String                 @default("Uncategorized")
+  User                 User                   @relation(fields: [userId], references: [id])
+  userId               String
 }
 
 model Transaction {
