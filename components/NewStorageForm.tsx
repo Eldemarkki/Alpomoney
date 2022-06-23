@@ -15,11 +15,11 @@ export const NewStorageForm = (props: Props) => {
 
   const dispatch = useDispatch();
 
-  return <form onSubmit={async (e) => {
+  return <form onSubmit={async e => {
     e.preventDefault();
     const response = await axios.post<Storage>("/api/storages", {
       name,
-      startAmount: centify(startAmount),
+      startAmount: centify(startAmount)
     });
 
     dispatch(addStorage(response.data));
@@ -33,7 +33,15 @@ export const NewStorageForm = (props: Props) => {
         </tr>
         <tr>
           <td><label htmlFor="sum">Sum</label></td>
-          <td><input type="number" step={0.01} id="sum" value={startAmount} onChange={e => setSum(Number(e.target.value))} /></td>
+          <td>
+            <input
+              type="number"
+              step={0.01}
+              id="sum"
+              value={startAmount}
+              onChange={e => setSum(Number(e.target.value))}
+            />
+          </td>
         </tr>
       </tbody>
     </table>

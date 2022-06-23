@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { hasKey } from "../../utils/types";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
@@ -15,21 +16,20 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(401).json({ error: "Not logged in" });
     }
 
-    const { body } = req;
-
-    if (!body.name) {
-      return res.status(400).json({
-        error: "Name is required"
-      });
+    if (!hasKey(req.body, "name")) {
+      return res.status(400).json({ error: "Missing name" });
+    }
+    if (typeof req.body.name !== "string") {
+      return res.status(400).json({ error: "Name must be a string" });
     }
 
     const prisma = new PrismaClient();
     const sink = await prisma.sink.create({
       data: {
-        name: body.name,
+        name: req.body.name,
         userId: user.id
       }
-    })
+    });
 
     res.status(200).json(sink);
   }

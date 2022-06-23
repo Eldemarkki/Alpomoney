@@ -1,4 +1,4 @@
-import { PrismaClient, Sink, User } from "@prisma/client";
+import { PrismaClient, Sink } from "@prisma/client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
@@ -23,21 +23,24 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
       <thead>
         <tr>
           <th>Name</th>
-          <th></th>
+          <th />
         </tr>
       </thead>
       <tbody>
         {sinks.map(sink => <tr key={sink.id}>
           <td>{sink.name}</td>
-          <td><button onClick={async () => {
-            await axios.delete(`/api/sinks/${sink.id}`)
-            dispatch(removeSink(sink.id))
-          }
-          }>Delete</button></td>
+          <td>
+            <button onClick={async () => {
+              await axios.delete(`/api/sinks/${sink.id}`);
+              dispatch(removeSink(sink.id));
+            }}>
+              Delete
+            </button>
+          </td>
         </tr>)}
       </tbody>
     </table>
-    <form onSubmit={async (e) => {
+    <form onSubmit={async e => {
       e.preventDefault();
       const response = await axios.post<Sink>("/api/sinks", {
         name
@@ -47,7 +50,7 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
       <input type="text" value={name} onChange={e => setName(e.target.value)} />
       <button type="submit">Submit</button>
     </form>
-  </>
+  </>;
 }
 
 export const getServerSideProps = withIronSessionSsr(
@@ -59,7 +62,7 @@ export const getServerSideProps = withIronSessionSsr(
           destination: "/login",
           permanent: false
         }
-      }
+      };
     }
 
     const prisma = new PrismaClient();
@@ -71,7 +74,7 @@ export const getServerSideProps = withIronSessionSsr(
         sinks,
         user
       }
-    }
+    };
   },
   sessionSettings
 );

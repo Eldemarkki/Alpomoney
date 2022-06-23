@@ -7,28 +7,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log(username, password);
-    try {
-      await axios.post<{ token: string }>("/api/login", {
-        username,
-        password
-      });
-      router.push("/");
-    }
-    catch {
+
+    axios.post<{ token: string }>("/api/login", {
+      username,
+      password
+    }).then(async () => {
+      await router.push("/");
+    }).catch(() => {
       console.log("Failed to login");
-    }
+    });
   };
 
   return <div>
     <h1>Login</h1>
     <form onSubmit={handleSubmit}>
       <label htmlFor="username">Username</label>
-      <input type="text" id="username" onChange={(e) => setUsername(e.target.value)} value={username} />
+      <input type="text" id="username" onChange={e => setUsername(e.target.value)} value={username} />
       <label htmlFor="password">Password</label>
-      <input type="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+      <input type="password" id="password" onChange={e => setPassword(e.target.value)} value={password} />
       <button type="submit">Login</button>
     </form>
   </div>;

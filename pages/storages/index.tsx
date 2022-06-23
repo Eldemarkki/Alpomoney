@@ -33,7 +33,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
     <NewStorageDialog
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
-      onCreate={(storage) => {
+      onCreate={storage => {
         setTotalSums({ ...totalSums, [storage.id]: storage.startAmount });
         setMonthlyExpenses({ ...monthlyExpenses, [storage.id]: 0 });
       }}
@@ -44,7 +44,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
           <th style={{ paddingRight: 30 }}>Name</th>
           <th>Sum</th>
           <th>Monthly expenses</th>
-          <th></th>
+          <th />
         </tr>
       </thead>
       <tbody>
@@ -61,12 +61,20 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         </tr>)}
       </tbody>
     </table>
-  </>
+  </>;
 }
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false
+        }
+      };
+    }
 
     const prisma = new PrismaClient();
 
@@ -80,9 +88,9 @@ export const getServerSideProps = withIronSessionSsr(
         storages,
         user,
         totalSums,
-        monthlyExpenses,
+        monthlyExpenses
       }
-    }
+    };
   },
   sessionSettings
 );

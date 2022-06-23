@@ -4,7 +4,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
 import { useEffect, useState } from "react";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
@@ -32,7 +32,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           <th>Sink</th>
           <th>Storage</th>
           <th>Created at</th>
-          <th></th>
+          <th />
         </tr>
       </thead>
       <tbody>
@@ -54,6 +54,14 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   const user = req.session.user;
+  if (!user) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false
+      }
+    };
+  }
 
   const prisma = new PrismaClient();
 
@@ -80,14 +88,14 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   const storages = await prisma.storage.findMany({
     where: {
       userId: user.id
-    },
+    }
   });
 
   const returnValue = {
     props: {
       transactions: transactions.map(t => ({ ...t, createdAt: t.createdAt.getTime() })),
       sinks,
-      storages,
+      storages
     }
   };
   return returnValue;

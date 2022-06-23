@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { hasKey } from "../../utils/types";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
@@ -11,27 +12,28 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(200).json(storages);
   }
   else if (req.method === "POST") {
-    const { body } = req;
-
     if (!req.session.user) {
       res.status(401).json({ error: "You must be logged in to create a storage" });
       return;
     }
 
-    if (!body.name) {
-      return res.status(400).json({
-        error: "Name is required"
-      });
+    if (!hasKey(req.body, "name")) {
+      return res.status(400).json({ error: "Missing name" });
     }
+    if (typeof req.body.name !== "string") {
+      return res.status(400).json({ error: "Name must be a string" });
+    }
+
+    const startAmount = hasKey(req.body, "startAmount") ? Number(req.body.startAmount) : 0;
 
     const prisma = new PrismaClient();
     const storage = await prisma.storage.create({
       data: {
-        name: body.name,
+        name: req.body.name,
         userId: req.session.user.id,
-        startAmount: body.startAmount || 0,
+        startAmount: startAmount || 0
       }
-    })
+    });
 
     res.status(200).json(storage);
   }

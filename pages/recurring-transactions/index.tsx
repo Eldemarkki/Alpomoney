@@ -14,7 +14,7 @@ import { moneyToString } from "../../utils/moneyUtils";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
-}
+};
 
 const calculateRegularCosts = (cost: number, frequency: RecurringTransactionFrequency) => {
   if (frequency === "DAILY") {
@@ -23,32 +23,32 @@ const calculateRegularCosts = (cost: number, frequency: RecurringTransactionFreq
       weekly: cost * 7,
       monthly: cost * 30,
       yearly: cost * 365
-    }
+    };
   } else if (frequency === "WEEKLY") {
     return {
       daily: cost / 7,
       weekly: cost,
       monthly: cost * 4,
       yearly: cost * 52
-    }
+    };
   } else if (frequency === "MONTHLY") {
     return {
       daily: cost / 30,
       weekly: cost / 4,
       monthly: cost,
       yearly: cost * 12
-    }
+    };
   } else if (frequency === "YEARLY") {
     return {
       daily: cost / 365,
       weekly: cost / 52,
       monthly: cost / 12,
       yearly: cost
-    }
+    };
   }
 
   assertNever(frequency);
-}
+};
 
 const formatFrequency = (frequency: RecurringTransactionFrequency) => {
   if (frequency === "DAILY") {
@@ -61,7 +61,7 @@ const formatFrequency = (frequency: RecurringTransactionFrequency) => {
     return "Yearly";
   }
   assertNever(frequency);
-}
+};
 
 export default function RecurringTransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
@@ -98,12 +98,12 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           <th>Price (yearly)</th>
           <th>Category</th>
           <th>Next date</th>
-          <th></th>
+          <th />
         </tr>
       </thead>
       <tbody>
         {recurringTransactions.map(recurringTransaction => {
-          const costs = calculateRegularCosts(recurringTransaction.amount, recurringTransaction.frequency)
+          const costs = calculateRegularCosts(recurringTransaction.amount, recurringTransaction.frequency);
           return <tr key={recurringTransaction.id}>
             <td>{recurringTransaction.name}</td>
             <td>{formatFrequency(recurringTransaction.frequency)}</td>
@@ -114,8 +114,8 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
             <td>{recurringTransaction.category}</td>
             <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
             <td><button onClick={async () => {
-              await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`)
-              dispatch(setRecurringTransactions(recurringTransactions.filter(rt => rt.id !== recurringTransaction.id)))
+              await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`);
+              dispatch(setRecurringTransactions(recurringTransactions.filter(rt => rt.id !== recurringTransaction.id)));
             }}>Delete</button></td>
           </tr>;
         })}
@@ -126,10 +126,20 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false
+        }
+      };
+    }
+
     const prisma = new PrismaClient();
     const recurringTransactions = await prisma.recurringTransaction.findMany({
       where: {
-        userId: req.session.user.id
+        userId: user.id
       }
     });
 
@@ -142,7 +152,7 @@ export const getServerSideProps = withIronSessionSsr(
         sinks,
         storages
       }
-    }
+    };
   },
   sessionSettings
-)
+);

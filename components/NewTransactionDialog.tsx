@@ -1,5 +1,5 @@
-import { NewTransactionForm } from "./NewTransactionForm"
-import * as Dialog from '@radix-ui/react-dialog';
+import { NewTransactionForm } from "./NewTransactionForm";
+import * as Dialog from "@radix-ui/react-dialog";
 
 interface Props {
   open: boolean,
@@ -7,14 +7,14 @@ interface Props {
 }
 
 export const NewTransactionDialog = (props: Props) => {
-  return <Dialog.Root open={props.open} onOpenChange={(isOpen) => { if (!isOpen) props.onClose() }}>
+  return <Dialog.Root open={props.open} onOpenChange={isOpen => { if (!isOpen) props.onClose(); }}>
     <Dialog.Overlay style={{
       position: "fixed",
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      background: "rgba(39,39,39,0.7)",
+      background: "rgba(39,39,39,0.7)"
     }} />
     <Dialog.Content style={{
       position: "fixed",
@@ -38,4 +38,4 @@ export const NewTransactionDialog = (props: Props) => {
       <NewTransactionForm onCreate={() => props.onClose()} />
     </Dialog.Content>
   </Dialog.Root>;
-}
+};

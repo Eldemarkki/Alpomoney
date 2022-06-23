@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { withIronSessionSsr } from 'iron-session/next';
-import { InferGetServerSidePropsType } from 'next'
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { NewTransactionDialog } from '../components/NewTransactionDialog';
-import { setSinks } from '../features/sinksSlice';
-import { setStorages } from '../features/storagesSlice';
-import { sessionSettings } from '../sessions/ironSessionSettings';
-import { moneyToString } from '../utils/moneyUtils';
+import { PrismaClient } from "@prisma/client";
+import { withIronSessionSsr } from "iron-session/next";
+import { InferGetServerSidePropsType } from "next";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { NewTransactionDialog } from "../components/NewTransactionDialog";
+import { setSinks } from "../features/sinksSlice";
+import { setStorages } from "../features/storagesSlice";
+import { sessionSettings } from "../sessions/ironSessionSettings";
+import { moneyToString } from "../utils/moneyUtils";
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -22,6 +22,7 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
 
   return <div>
     <h1>Dashboard</h1>
+    <p>Welcome back, {props.user.name}</p>
     <button onClick={() => setDialogOpen(true)}>
       New transaction
     </button>
@@ -37,15 +38,18 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
           </tr>
         </thead>
         <tbody>
-          {[...props.storages].sort((a, b) => props.totalSums[b.id] - props.totalSums[a.id]).map(storage => <tr key={storage.id}>
-            <td>{storage.name}</td>
-            <td align='right'>{moneyToString(props.totalSums[storage.id])}</td>
-            <td align="right" style={{ color: "red" }}>{moneyToString(-props.spentThisMonth[storage.id])}</td>
-          </tr>)}
+          {[...props.storages]
+            .sort((a, b) => props.totalSums[b.id] - props.totalSums[a.id])
+            .map(storage =>
+              <tr key={storage.id}>
+                <td>{storage.name}</td>
+                <td align='right'>{moneyToString(props.totalSums[storage.id])}</td>
+                <td align="right" style={{ color: "red" }}>{moneyToString(-props.spentThisMonth[storage.id])}</td>
+              </tr>)}
         </tbody>
       </table>
     </div>
-  </div>
+  </div>;
 }
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
@@ -55,7 +59,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
         destination: "/login",
         permanent: false
       }
-    }
+    };
   }
 
   const prisma = new PrismaClient();
@@ -72,7 +76,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   for (const storage of storages) {
     const sum = await prisma.transaction.aggregate({
       where: {
-        storageId: storage.id,
+        storageId: storage.id
       },
       _sum: {
         amount: true
@@ -85,12 +89,12 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   for (const storage of storages) {
     const expenses = await prisma.recurringTransaction.aggregate({
       where: {
-        storageId: storage.id,
+        storageId: storage.id
       },
       _sum: {
         amount: true
       }
-    })
+    });
     recurringMonthlyExpenses[storage.id] = expenses._sum.amount || 0;
   }
 
@@ -117,7 +121,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
       storages,
       recurringMonthlyExpenses,
       spentThisMonth,
-      totalSums
+      totalSums,
+      user: req.session.user
     }
-  }
+  };
 }, sessionSettings);
