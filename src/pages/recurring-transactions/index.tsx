@@ -4,6 +4,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { RootState } from "../../app/store";
 import { Button } from "../../components/Button";
 import { NewRecurringTransactionDialog } from "../../components/NewRecurringTransactionDialog";
@@ -64,6 +65,11 @@ const formatFrequency = (frequency: RecurringTransactionFrequency) => {
   assertNever(frequency);
 };
 
+const TransactionsTable = styled.table({
+  marginTop: 30,
+  width: "100%"
+});
+
 export default function RecurringTransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
 
@@ -83,12 +89,21 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
   const recurringTransactions = useSelector((state: RootState) => state.recurringTransactions.recurringTransactions);
 
   return <div>
-    <h1>Recurring transactions</h1>
-    <Button onClick={() => setDialogOpen(true)}>
-      New recurring transaction
-    </Button>
+    <div style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    }}>
+      <h1>Recurring transactions</h1>
+      <Button
+        variant="filled"
+        onClick={() => setDialogOpen(true)}
+      >
+        New recurring transaction
+      </Button>
+    </div>
     <NewRecurringTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
-    <table>
+    <TransactionsTable>
       <thead>
         <tr>
           <th style={{ paddingRight: 30 }}>Name</th>
@@ -127,7 +142,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           </tr>;
         })}
       </tbody>
-    </table>
+    </TransactionsTable>
   </div>;
 }
 

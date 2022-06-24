@@ -73,7 +73,10 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
   return <>
     <h1>Storages</h1>
     <p>Total value: {moneyToString(Object.values(totalSums).reduce((prev, curr) => prev + curr, 0))}</p>
-    <Button onClick={() => setDialogOpen(true)}>
+    <Button
+      variant="filled"
+      onClick={() => setDialogOpen(true)}
+    >
       New storage
     </Button>
     <NewStorageDialog

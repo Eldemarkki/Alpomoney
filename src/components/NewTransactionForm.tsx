@@ -88,6 +88,12 @@ export const NewTransactionForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <Button type="submit">Create</Button>
+    <Button
+      type="submit"
+      variant="filled"
+      style={{
+        marginTop: 10
+      }}
+    >Create</Button>
   </form>;
 };

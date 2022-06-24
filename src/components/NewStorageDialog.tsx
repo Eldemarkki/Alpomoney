@@ -1,6 +1,5 @@
 import { Storage } from "@prisma/client";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "./Button";
+import { Dialog } from "./Dialog";
 import { NewStorageForm } from "./NewStorageForm";
 
 interface Props {
@@ -10,40 +9,14 @@ interface Props {
 }
 
 export const NewStorageDialog = (props: Props) => {
-  return <Dialog.Root open={props.open} onOpenChange={isOpen => { if (!isOpen) props.onClose(); }}>
-    <Dialog.Overlay style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: "rgba(39,39,39,0.7)"
+  return <Dialog
+    open={props.open}
+    onClose={props.onClose}
+    title="New storage"
+  >
+    <NewStorageForm onCreate={storage => {
+      props.onCreate(storage);
+      props.onClose();
     }} />
-    <Dialog.Content style={{
-      position: "fixed",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "fit-content",
-      height: "fit-content",
-      padding: 50,
-      background: "white",
-      borderRadius: 15
-    }}>
-      <Dialog.Close asChild style={{
-        position: "fixed",
-        right: 15,
-        top: 15
-      }}>
-        <Button>
-          Close
-        </Button>
-      </Dialog.Close>
-      <Dialog.Title>New storage</Dialog.Title>
-      <NewStorageForm onCreate={storage => {
-        props.onCreate(storage);
-        props.onClose();
-      }} />
-    </Dialog.Content>
-  </Dialog.Root>;
+  </Dialog>;
 };

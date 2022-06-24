@@ -10,6 +10,12 @@ import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
 import { moneyToString } from "../../utils/moneyUtils";
 import { Button } from "../../components/Button";
+import styled from "styled-components";
+
+const TransactionsTable = styled.table({
+  marginTop: 30,
+  width: "100%"
+});
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
@@ -25,7 +31,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
   return <>
     <h1>Transactions</h1>
     <NewTransactionForm onCreate={transaction => setTransactions([...transactions, transaction])} />
-    <table style={{ marginTop: 30 }}>
+    <TransactionsTable>
       <thead>
         <tr>
           <th>Amount</th>
@@ -43,7 +49,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
           <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
           <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-          <td>
+          <td align="right">
             <Button onClick={async () => {
               await axios.delete(`/api/transactions/${transaction.id}`);
               setTransactions(transactions.filter(t => t.id !== transaction.id));
@@ -53,7 +59,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           </td>
         </tr>)}
       </tbody>
-    </table>
+    </TransactionsTable>
   </>;
 }
 

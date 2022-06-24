@@ -66,8 +66,8 @@ const handler: NextApiHandler = async (req, res) => {
     if (!hasKey(req.body, "startDate")) {
       return res.status(400).json({ error: "Missing startDate" });
     }
-    if (typeof req.body.startDate !== "string") {
-      return res.status(400).json({ error: "startDate must be a string" });
+    if (typeof req.body.startDate !== "string" && typeof req.body.startDate !== "number") {
+      return res.status(400).json({ error: "startDate must be a string or a number" });
     }
     if (!isValidDate(req.body.startDate)) {
       return res.status(400).json({ error: "startDate must be a valid date" });
