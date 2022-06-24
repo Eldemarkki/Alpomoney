@@ -103,7 +103,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
       </Button>
     </div>
     <NewRecurringTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
-    <TransactionsTable>
+    {recurringTransactions.length > 0 ? <TransactionsTable>
       <thead>
         <tr>
           <th>Name</th>
@@ -142,7 +142,21 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           </tr>;
         })}
       </tbody>
-    </TransactionsTable>
+    </TransactionsTable> : <div style={{
+      minHeight: 300,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column"
+    }}>
+      <p>No recurring transactions. Create a new one by clicking the button below!</p>
+      <Button
+        variant="filled"
+        onClick={() => setDialogOpen(true)}
+      >
+        Create
+      </Button>
+    </div>}
   </div>;
 }
 

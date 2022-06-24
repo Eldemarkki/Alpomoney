@@ -1,9 +1,19 @@
 import { NewTransactionForm } from "./NewTransactionForm";
 import { Dialog } from "./Dialog";
+import { ConvertDates } from "../utils/types";
+import { Transaction } from "@prisma/client";
 
 interface Props {
   open: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onCreate: (transaction: ConvertDates<Transaction> & {
+    Sink: {
+      name: string
+    },
+    Storage: {
+      name: string
+    }
+  }) => void
 }
 
 export const NewTransactionDialog = (props: Props) => {
@@ -12,6 +22,9 @@ export const NewTransactionDialog = (props: Props) => {
     onClose={props.onClose}
     title="New transaction"
   >
-    <NewTransactionForm onCreate={() => props.onClose()} />
+    <NewTransactionForm onCreate={transaction => {
+      props.onCreate(transaction);
+      return props.onClose();
+    }} />
   </Dialog>;
 };

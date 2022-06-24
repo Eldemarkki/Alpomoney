@@ -7,10 +7,10 @@ import { sessionSettings } from "../../sessions/ironSessionSettings";
 import { useDispatch } from "react-redux";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
-import { NewTransactionForm } from "../../components/NewTransactionForm";
 import { Button } from "../../components/Button";
 import styled from "styled-components";
 import { Money } from "../../components/Money";
+import { NewTransactionDialog } from "../../components/NewTransactionDialog";
 
 const TransactionsTable = styled.table({
   marginTop: 30,
@@ -19,6 +19,7 @@ const TransactionsTable = styled.table({
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,9 +30,25 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
   });
 
   return <>
-    <h1>Transactions</h1>
-    <NewTransactionForm onCreate={transaction => setTransactions([...transactions, transaction])} />
-    <TransactionsTable>
+    <div style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    }}>
+      <h1>Transactions</h1>
+      <Button
+        variant="filled"
+        onClick={() => setDialogOpen(true)}
+      >
+        New transaction
+      </Button>
+    </div>
+    <NewTransactionDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+      onCreate={transaction => setTransactions([...transactions, transaction])}
+    />
+    {transactions.length > 0 ? <TransactionsTable>
       <thead>
         <tr>
           <th style={{ textAlign: "right" }}>Amount</th>
@@ -59,7 +76,21 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           </td>
         </tr>)}
       </tbody>
-    </TransactionsTable>
+    </TransactionsTable> : <div style={{
+      minHeight: 300,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column"
+    }}>
+      <p>No transactions. Create a new one by clicking the button below!</p>
+      <Button
+        variant="filled"
+        onClick={() => setDialogOpen(true)}
+      >
+        New transaction
+      </Button>
+    </div>}
   </>;
 }
 
