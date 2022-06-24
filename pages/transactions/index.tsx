@@ -9,6 +9,7 @@ import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
 import { moneyToString } from "../../utils/moneyUtils";
+import { Button } from "../../components/Button";
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
@@ -42,10 +43,14 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
           <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
           <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-          <td><button onClick={async () => {
-            await axios.delete(`/api/transactions/${transaction.id}`);
-            setTransactions(transactions.filter(t => t.id !== transaction.id));
-          }}>Delete</button></td>
+          <td>
+            <Button onClick={async () => {
+              await axios.delete(`/api/transactions/${transaction.id}`);
+              setTransactions(transactions.filter(t => t.id !== transaction.id));
+            }}>
+              Delete
+            </Button>
+          </td>
         </tr>)}
       </tbody>
     </table>

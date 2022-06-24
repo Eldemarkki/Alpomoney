@@ -6,6 +6,7 @@ import { RootState } from "../app/store";
 import { addRecurringTransaction } from "../features/recurringTransactionsSlice";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
+import { Button } from "./Button";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
@@ -141,6 +142,6 @@ export const NewRecurringTransactionForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <button type="submit">Create</button>
+    <Button type="submit">Create</Button>
   </form>;
 };

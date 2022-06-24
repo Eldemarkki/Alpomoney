@@ -5,6 +5,7 @@ import { InferGetServerSidePropsType } from "next";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { Button } from "../../components/Button";
 import { NewRecurringTransactionDialog } from "../../components/NewRecurringTransactionDialog";
 import { setRecurringTransactions } from "../../features/recurringTransactionsSlice";
 import { setSinks } from "../../features/sinksSlice";
@@ -83,9 +84,9 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
 
   return <div>
     <h1>Recurring transactions</h1>
-    <button onClick={() => setDialogOpen(true)}>
+    <Button onClick={() => setDialogOpen(true)}>
       New recurring transaction
-    </button>
+    </Button>
     <NewRecurringTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <table>
       <thead>
@@ -113,10 +114,16 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
             <td>{moneyToString(costs.yearly)}</td>
             <td>{recurringTransaction.category}</td>
             <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
-            <td><button onClick={async () => {
-              await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`);
-              dispatch(setRecurringTransactions(recurringTransactions.filter(rt => rt.id !== recurringTransaction.id)));
-            }}>Delete</button></td>
+            <td>
+              <Button onClick={async () => {
+                await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`);
+                // TODO: Create action `deleteRecurringTransaction`
+                const newTransactions = recurringTransactions.filter(rt => rt.id !== recurringTransaction.id);
+                dispatch(setRecurringTransactions(newTransactions));
+              }}>
+                Delete
+              </Button>
+            </td>
           </tr>;
         })}
       </tbody>

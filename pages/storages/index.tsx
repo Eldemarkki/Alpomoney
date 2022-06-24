@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Storage } from "@prisma/client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
@@ -10,6 +10,52 @@ import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
 import { getRecurringMonthlyExpensesMultiple, getTransactionSums } from "../../utils/storageUtils";
 import { moneyToString } from "../../utils/moneyUtils";
+import styled from "styled-components";
+import { Button } from "../../components/Button";
+
+const StoragesTable = styled.table({
+  width: "100%",
+  borderCollapse: "collapse",
+  marginTop: 32,
+  "td": {
+    borderTop: "1px solid #ccc",
+    borderBottom: "1px solid #ccc",
+    padding: "0px 4px"
+  },
+  "tr": {
+    height: 48
+  }
+});
+
+interface StorageTableRowProps {
+  storage: Storage,
+  sum: number,
+  expenses: number
+}
+
+const StoragesTableRow = ({
+  storage,
+  sum,
+  expenses
+}: StorageTableRowProps) => {
+  const dispatch = useDispatch();
+  const [deleting, setDeleting] = useState(false);
+
+  return <tr>
+    <td>{storage.name}</td>
+    <td>{moneyToString(sum)}</td>
+    <td style={{ color: "red" }}>{moneyToString(expenses)}</td>
+    <td align="right">
+      <Button
+        loading={deleting}
+        onClick={async () => {
+          setDeleting(true);
+          await axios.delete(`/api/storages/${storage.id}`);
+          dispatch(removeStorage(storage.id));
+        }}>Delete</Button>
+    </td>
+  </tr>;
+};
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [totalSums, setTotalSums] = useState(props.totalSums);
@@ -27,9 +73,9 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
   return <>
     <h1>Storages</h1>
     <p>Total value: {moneyToString(Object.values(totalSums).reduce((prev, curr) => prev + curr, 0))}</p>
-    <button onClick={() => setDialogOpen(true)}>
+    <Button onClick={() => setDialogOpen(true)}>
       New storage
-    </button>
+    </Button>
     <NewStorageDialog
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
@@ -38,7 +84,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         setMonthlyExpenses({ ...monthlyExpenses, [storage.id]: 0 });
       }}
     />
-    <table>
+    <StoragesTable>
       <thead>
         <tr>
           <th style={{ paddingRight: 30 }}>Name</th>
@@ -48,19 +94,16 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         </tr>
       </thead>
       <tbody>
-        {[...storages].sort((a, b) => totalSums[b.id] - totalSums[a.id]).map(storage => <tr key={storage.id}>
-          <td>{storage.name}</td>
-          <td align="right">{moneyToString(totalSums[storage.id])}</td>
-          <td align="right" style={{ color: "red" }}>{moneyToString(monthlyExpenses[storage.id])}</td>
-          <td>
-            <button onClick={async () => {
-              await axios.delete(`/api/storages/${storage.id}`);
-              dispatch(removeStorage(storage.id));
-            }}>Delete</button>
-          </td>
-        </tr>)}
+        {[...storages].sort((a, b) => totalSums[b.id] - totalSums[a.id]).map(storage =>
+          <StoragesTableRow
+            key={storage.id}
+            storage={storage}
+            expenses={monthlyExpenses[storage.id]}
+            sum={totalSums[storage.id]}
+          />
+        )}
       </tbody>
-    </table>
+    </StoragesTable>
   </>;
 }
 

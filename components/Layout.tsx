@@ -14,7 +14,8 @@ const GlobalStyles = createGlobalStyle({
 const Container = styled.div({
   display: "flex",
   gap: 30,
-  height: "100vh"
+  minHeight: "100vh",
+  padding: 16
 });
 
 const Sidebar = styled.div({
@@ -22,7 +23,6 @@ const Sidebar = styled.div({
   justifyContent: "space-between",
   flexDirection: "column",
   width: 300,
-  margin: 16,
   borderRadius: 16,
   background: "linear-gradient(to bottom, var(--sidebar-top-color), var(--sidebar-bottom-color))"
 });
@@ -48,6 +48,11 @@ const NewTransactionButton = styled.button({
   cursor: "pointer",
   border: "none",
   width: "100%"
+});
+
+const Content = styled.main({
+  padding: "24px 16px",
+  flex: 1
 });
 
 const StyledLink = styled.a<{ active?: boolean }>(props => ({
@@ -98,8 +103,8 @@ export const Layout = (props: PropsWithChildren) => {
         </NewTransactionButton>
       </SidebarBottom>
     </Sidebar>
-    <main>
+    <Content>
       {props.children}
-    </main>
+    </Content>
   </Container>;
 };

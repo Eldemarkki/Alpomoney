@@ -3,6 +3,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Button } from "../components/Button";
 import { NewTransactionDialog } from "../components/NewTransactionDialog";
 import { setSinks } from "../features/sinksSlice";
 import { setStorages } from "../features/storagesSlice";
@@ -23,9 +24,9 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
   return <div>
     <h1>Dashboard</h1>
     <p>Welcome back, {props.user.name}</p>
-    <button onClick={() => setDialogOpen(true)}>
+    <Button onClick={() => setDialogOpen(true)}>
       New transaction
-    </button>
+    </Button>
     <NewTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <div>
       <h2>My Storages</h2>

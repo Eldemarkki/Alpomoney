@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
+import { Button } from "./Button";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<Transaction> & {
@@ -87,6 +88,6 @@ export const NewTransactionForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <button type="submit">Create</button>
+    <Button type="submit">Create</Button>
   </form>;
 };

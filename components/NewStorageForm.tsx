@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addStorage } from "../features/storagesSlice";
 import { centify } from "../utils/moneyUtils";
+import { Button } from "./Button";
 
 interface Props {
   onCreate: (storage: Storage) => void
@@ -45,6 +46,6 @@ export const NewStorageForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <button type="submit">Submit</button>
+    <Button type="submit">Submit</Button>
   </form>;
 };

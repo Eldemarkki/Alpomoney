@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSink, removeSink, setSinks } from "../../features/sinksSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
+import { Button } from "../../components/Button";
 
 export default function SinksPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [name, setName] = useState("");
@@ -30,12 +31,12 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
         {sinks.map(sink => <tr key={sink.id}>
           <td>{sink.name}</td>
           <td>
-            <button onClick={async () => {
+            <Button onClick={async () => {
               await axios.delete(`/api/sinks/${sink.id}`);
               dispatch(removeSink(sink.id));
             }}>
               Delete
-            </button>
+            </Button>
           </td>
         </tr>)}
       </tbody>
@@ -48,7 +49,7 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
       dispatch(addSink(response.data));
     }}>
       <input type="text" value={name} onChange={e => setName(e.target.value)} />
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
     </form>
   </>;
 }

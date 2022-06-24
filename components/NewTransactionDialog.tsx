@@ -1,5 +1,6 @@
 import { NewTransactionForm } from "./NewTransactionForm";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Button } from "./Button";
 
 interface Props {
   open: boolean,
@@ -27,12 +28,14 @@ export const NewTransactionDialog = (props: Props) => {
       background: "white",
       borderRadius: 15
     }}>
-      <Dialog.Close style={{
+      <Dialog.Close asChild style={{
         position: "fixed",
         right: 15,
         top: 15
       }}>
-        Close
+        <Button>
+          Close
+        </Button>
       </Dialog.Close>
       <Dialog.Title>New transaction</Dialog.Title>
       <NewTransactionForm onCreate={() => props.onClose()} />

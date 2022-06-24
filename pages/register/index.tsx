@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
+import { Button } from "../../components/Button";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ export default function RegisterPage() {
       <input type="text" id="username" onChange={e => setUsername(e.target.value)} value={username} />
       <label htmlFor="password">Password</label>
       <input type="password" id="password" onChange={e => setPassword(e.target.value)} value={password} />
-      <button type="submit">Register</button>
+      <Button type="submit">Register</Button>
     </form>
   </div>;
 }

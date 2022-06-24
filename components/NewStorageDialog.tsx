@@ -1,5 +1,6 @@
 import { Storage } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Button } from "./Button";
 import { NewStorageForm } from "./NewStorageForm";
 
 interface Props {
@@ -29,12 +30,14 @@ export const NewStorageDialog = (props: Props) => {
       background: "white",
       borderRadius: 15
     }}>
-      <Dialog.Close style={{
+      <Dialog.Close asChild style={{
         position: "fixed",
         right: 15,
         top: 15
       }}>
-        Close
+        <Button>
+          Close
+        </Button>
       </Dialog.Close>
       <Dialog.Title>New storage</Dialog.Title>
       <NewStorageForm onCreate={storage => {
