@@ -8,9 +8,9 @@ import { useDispatch } from "react-redux";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { NewTransactionForm } from "../../components/NewTransactionForm";
-import { moneyToString } from "../../utils/moneyUtils";
 import { Button } from "../../components/Button";
 import styled from "styled-components";
+import { Money } from "../../components/Money";
 
 const TransactionsTable = styled.table({
   marginTop: 30,
@@ -34,7 +34,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
     <TransactionsTable>
       <thead>
         <tr>
-          <th>Amount</th>
+          <th style={{ textAlign: "right" }}>Amount</th>
           <th>Description</th>
           <th>Sink</th>
           <th>Storage</th>
@@ -44,7 +44,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
       </thead>
       <tbody>
         {transactions.map(transaction => <tr key={transaction.id}>
-          <td>{moneyToString(transaction.amount)}</td>
+          <Money<"td"> as="td" cents={transaction.amount} invertColor />
           <td>{transaction.description || <i>No description</i>}</td>
           <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
           <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>

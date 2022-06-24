@@ -3,10 +3,10 @@ import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { Money } from "../components/Money";
 import { setSinks } from "../features/sinksSlice";
 import { setStorages } from "../features/storagesSlice";
 import { sessionSettings } from "../sessions/ironSessionSettings";
-import { moneyToString } from "../utils/moneyUtils";
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
@@ -26,8 +26,8 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
         <thead>
           <tr>
             <th style={{ paddingRight: 30 }}>Name</th>
-            <th>Sum</th>
-            <th>Spent this month</th>
+            <th style={{ textAlign: "right" }}>Sum</th>
+            <th style={{ paddingLeft: 30, textAlign: "right" }}>Spent this month</th>
           </tr>
         </thead>
         <tbody>
@@ -36,8 +36,8 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
             .map(storage =>
               <tr key={storage.id}>
                 <td>{storage.name}</td>
-                <td align='right'>{moneyToString(props.totalSums[storage.id])}</td>
-                <td align="right" style={{ color: "red" }}>{moneyToString(-props.spentThisMonth[storage.id])}</td>
+                <Money<"td"> as="td" align="right" cents={props.totalSums[storage.id]} />
+                <Money<"td"> as="td" align="right" cents={props.spentThisMonth[storage.id]} invertColor />
               </tr>)}
         </tbody>
       </table>

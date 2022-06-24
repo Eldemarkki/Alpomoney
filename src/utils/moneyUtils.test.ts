@@ -1,5 +1,5 @@
-import { it, describe, expect } from 'vitest';
-import { centify, decentify } from './moneyUtils';
+import { it, describe, expect } from "vitest";
+import { centify, decentify } from "./moneyUtils";
 
 describe("moneyUtils", () => {
   it("should centify 1 correctly", () => expect(centify(1)).toEqual(100));
@@ -12,4 +12,4 @@ describe("moneyUtils", () => {
 
   it("should decentify 1015 correctly", () => expect(decentify(1015)).toEqual(10.15));
   it("should decentify 1810 correctly", () => expect(decentify(1810)).toEqual(18.10));
-})
+});

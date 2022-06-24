@@ -2,12 +2,12 @@ import { Sink } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface SinksState {
-  sinks: Sink[];
+  sinks: Sink[]
 }
 
 const initialState: SinksState = {
   sinks: []
-}
+};
 
 export const sinksSlice = createSlice({
   name: "sinks",

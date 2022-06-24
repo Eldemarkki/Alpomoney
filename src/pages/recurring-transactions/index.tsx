@@ -7,12 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../../app/store";
 import { Button } from "../../components/Button";
+import { Money } from "../../components/Money";
 import { NewRecurringTransactionDialog } from "../../components/NewRecurringTransactionDialog";
 import { setRecurringTransactions } from "../../features/recurringTransactionsSlice";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { moneyToString } from "../../utils/moneyUtils";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -106,7 +106,7 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
     <TransactionsTable>
       <thead>
         <tr>
-          <th style={{ paddingRight: 30 }}>Name</th>
+          <th>Name</th>
           <th>Frequency</th>
           <th>Price (daily)</th>
           <th>Price (weekly)</th>
@@ -123,10 +123,10 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
           return <tr key={recurringTransaction.id}>
             <td>{recurringTransaction.name}</td>
             <td>{formatFrequency(recurringTransaction.frequency)}</td>
-            <td>{moneyToString(costs.daily)}</td>
-            <td>{moneyToString(costs.weekly)}</td>
-            <td>{moneyToString(costs.monthly)}</td>
-            <td>{moneyToString(costs.yearly)}</td>
+            <Money<"td"> as="td" cents={costs.daily} invertColor />
+            <Money<"td"> as="td" cents={costs.weekly} invertColor />
+            <Money<"td"> as="td" cents={costs.monthly} invertColor />
+            <Money<"td"> as="td" cents={costs.yearly} invertColor />
             <td>{recurringTransaction.category}</td>
             <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
             <td>

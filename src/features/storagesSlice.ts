@@ -2,12 +2,12 @@ import { Storage } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface StoragesState {
-  storages: Storage[];
+  storages: Storage[]
 }
 
 const initialState: StoragesState = {
   storages: []
-}
+};
 
 export const storagesSlice = createSlice({
   name: "storages",

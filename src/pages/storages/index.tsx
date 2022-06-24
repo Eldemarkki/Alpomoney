@@ -9,9 +9,9 @@ import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
 import { getRecurringMonthlyExpensesMultiple, getStorageBalances } from "../../utils/storageUtils";
-import { moneyToString } from "../../utils/moneyUtils";
 import styled from "styled-components";
 import { Button } from "../../components/Button";
+import { Money } from "../../components/Money";
 
 const StoragesTable = styled.table({
   width: "100%",
@@ -43,8 +43,8 @@ const StoragesTableRow = ({
 
   return <tr>
     <td>{storage.name}</td>
-    <td>{moneyToString(sum)}</td>
-    <td style={{ color: "red" }}>{moneyToString(expenses)}</td>
+    <Money as="td" cents={sum} />
+    <Money as="td" cents={expenses} invertColor />
     <td align="right">
       <Button
         loading={deleting}
@@ -52,7 +52,9 @@ const StoragesTableRow = ({
           setDeleting(true);
           await axios.delete(`/api/storages/${storage.id}`);
           dispatch(removeStorage(storage.id));
-        }}>Delete</Button>
+        }}>
+        Delete
+      </Button>
     </td>
   </tr>;
 };
@@ -72,7 +74,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
 
   return <>
     <h1>Storages</h1>
-    <p>Total value: {moneyToString(Object.values(totalSums).reduce((prev, curr) => prev + curr, 0))}</p>
+    <p>Total value: <Money<"span"> cents={Object.values(totalSums).reduce((prev, curr) => prev + curr, 0)} /></p>
     <Button
       variant="filled"
       onClick={() => setDialogOpen(true)}
@@ -90,9 +92,9 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
     <StoragesTable>
       <thead>
         <tr>
-          <th style={{ paddingRight: 30 }}>Name</th>
-          <th>Sum</th>
-          <th>Monthly expenses</th>
+          <th>Name</th>
+          <th style={{ textAlign: "right" }}>Sum</th>
+          <th style={{ textAlign: "right" }}>Monthly expenses</th>
           <th />
         </tr>
       </thead>
