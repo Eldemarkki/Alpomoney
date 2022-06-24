@@ -12,6 +12,8 @@ import { Button } from "../../components/Button";
 import { Money } from "../../components/Money";
 import { Grid } from "../../components/Grid";
 import axios from "axios";
+import { NoDataContainer } from "../../components/containers/NoDataContainer";
+import { PageHeader } from "../../components/PageHeader";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [totalSums, setTotalSums] = useState(props.storageBalances);
@@ -27,14 +29,14 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
   const storages = useSelector((state: RootState) => state.storages.storages);
 
   return <>
-    <h1>Storages</h1>
-    <p>Total value: <Money<"span"> cents={Object.values(totalSums).reduce((prev, curr) => prev + curr, 0)} /></p>
-    <Button
-      variant="filled"
-      onClick={() => setDialogOpen(true)}
-    >
-      New storage
-    </Button>
+    <PageHeader
+      title="Storages"
+      button={<Button onClick={() => setDialogOpen(true)} variant="filled">New storage</Button>} />
+    {storages.length > 0 &&
+      <p>
+        Total value: <Money<"span"> cents={Object.values(totalSums).reduce((prev, curr) => prev + curr, 0)} />
+      </p>
+    }
     <NewStorageDialog
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
@@ -43,7 +45,7 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         setMonthlyExpenses({ ...monthlyExpenses, [storage.id]: 0 });
       }}
     />
-    <Grid<Storage>
+    {storages.length > 0 ? <Grid<Storage>
       rows={[...storages].sort((a, b) => totalSums[b.id] - totalSums[a.id])}
       deleteRow={async storage => {
         await axios.delete(`/api/storages/${storage.id}`);
@@ -56,22 +58,20 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         },
         {
           name: "Balance",
-          getter: storage => totalSums[storage.id],
           headerAlignment: "right",
-          cellRenderer: storage => {
-            return <Money<"td"> as="td" cents={totalSums[storage.id]} />;
-          }
+          cellRenderer: storage => <Money<"td"> as="td" cents={totalSums[storage.id]} />
         },
         {
           name: "Monthly expenses",
-          getter: storage => monthlyExpenses[storage.id],
           headerAlignment: "right",
-          cellRenderer: storage => {
-            return <Money<"td"> as="td" cents={monthlyExpenses[storage.id]} invertColor />;
-          }
+          cellRenderer: storage => <Money<"td"> as="td" cents={monthlyExpenses[storage.id]} invertColor />
         }
       ]}
-    />
+    /> : <NoDataContainer
+      text="No storages. Create a new one by clicking the button below!"
+      buttonText="Create new storage"
+      onClick={() => setDialogOpen(true)}
+    />}
   </>;
 }
 
