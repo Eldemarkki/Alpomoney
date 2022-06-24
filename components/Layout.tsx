@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { PropsWithChildren, ReactNode } from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { Button } from "./Button";
 
 const GlobalStyles = createGlobalStyle({
   ":root": {
@@ -37,17 +38,6 @@ const SidebarTop = styled.div({
 const SidebarBottom = styled.div({
   color: "white",
   padding: 15
-});
-
-const NewTransactionButton = styled.button({
-  backgroundColor: "rgb(145, 202, 253)",
-  padding: 15,
-  borderRadius: 8,
-  textAlign: "center",
-  color: "black",
-  cursor: "pointer",
-  border: "none",
-  width: "100%"
 });
 
 const Content = styled.main({
@@ -96,11 +86,16 @@ export const Layout = (props: PropsWithChildren) => {
         <StyledNextLink href="/api/logout">🔐 Log out</StyledNextLink>
       </SidebarTop>
       <SidebarBottom>
-        <NewTransactionButton onClick={() => {
-          console.log("TODO: open new transaction form");
-        }}>
+        <Button
+          fullWidth
+          primary
+          extraPadding
+          onClick={() => {
+            console.log("TODO: open new transaction form");
+          }}
+        >
           New transaction
-        </NewTransactionButton>
+        </Button>
       </SidebarBottom>
     </Sidebar>
     <Content>
