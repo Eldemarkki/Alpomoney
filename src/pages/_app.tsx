@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { useState } from "react";
 import { Layout } from "../components/Layout";
 import { UserContext } from "../contexts/UserContext";
-import "../styles/globals.css";
+import "../../styles/globals.css";
 import { Provider } from "react-redux";
 import { store } from "../app/store";
 import Head from "next/head";

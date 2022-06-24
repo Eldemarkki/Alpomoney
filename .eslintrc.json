@@ -147,7 +147,8 @@
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "varsIgnorePattern": "^_" }
-    ]
+    ],
+    "react/display-name": "off"
   },
   "settings": {
     "react": {

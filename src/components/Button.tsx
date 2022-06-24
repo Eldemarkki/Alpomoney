@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Property } from "csstype";
 import { TransientProps } from "../utils/types";
@@ -40,23 +40,18 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
   }[props.$variant])
 }));
 
-export const Button = ({
-  children,
-  variant = "transparent",
-  loading,
-  fullWidth,
-  extraPadding,
-  textColor,
-  ...rest
-}: PropsWithChildren<ButtonProps & React.ComponentPropsWithoutRef<"button">>) => {
-  return <ButtonComponent
-    disabled={loading}
-    $variant={variant}
-    $fullWidth={fullWidth}
-    $extraPadding={extraPadding}
-    $textColor={textColor}
-    {...rest}
-  >
-    {children}
-  </ButtonComponent>;
-};
+export const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &
+  React.ComponentPropsWithoutRef<"button">>>((props, ref) => (
+    <ButtonComponent
+      disabled={props.loading}
+      $extraPadding={props.extraPadding}
+      $variant={props.variant || "transparent"}
+      $fullWidth={props.fullWidth}
+      $textColor={props.textColor}
+      $loading={props.loading}
+      ref={ref}
+      {...props}
+    >
+      {props.children}
+    </ButtonComponent>
+  ));
