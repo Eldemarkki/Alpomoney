@@ -25,17 +25,19 @@ export const DialogContent = styled(RadixDialog.Content)({
   borderRadius: 15
 });
 
-export const DialogClose = () => <RadixDialog.Close
-  asChild
-  style={{
-    position: "fixed",
-    right: 15,
-    top: 15
-  }}>
+const DialogCloseComponent = styled(RadixDialog.Close).attrs({
+  asChild: true
+})({
+  position: "fixed",
+  right: 15,
+  top: 15
+});
+
+export const DialogClose = () => <DialogCloseComponent>
   <Button>
     Close
   </Button>
-</RadixDialog.Close>;
+</DialogCloseComponent>;
 
 interface DialogProps {
   open: boolean,

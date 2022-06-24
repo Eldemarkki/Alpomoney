@@ -34,3 +34,7 @@ export const Money = <T extends ElementType>({
     {moneyToString(cents)}
   </Component>;
 };
+
+export const MoneyHeaderCell = styled.th({
+  textAlign: "right"
+});

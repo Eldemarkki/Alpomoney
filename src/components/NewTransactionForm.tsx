@@ -2,10 +2,17 @@ import { Transaction } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import styled from "styled-components";
 import { RootState } from "../app/store";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
+
+const FormComponent = styled.form({
+  display: "flex",
+  flexDirection: "column",
+  gap: 16
+});
 
 interface Props {
   onCreate?: (transaction: ConvertDates<Transaction> & {
@@ -27,7 +34,7 @@ export const NewTransactionForm = (props: Props) => {
   const [sinkId, setSinkId] = useState<string>(undefined);
   const [storageId, setStorageId] = useState<string>(undefined);
 
-  return <form onSubmit={async e => {
+  return <FormComponent onSubmit={async e => {
     e.preventDefault();
     const response = await axios.post<ConvertDates<Transaction>>("/api/transactions", {
       amount: centify(amount),
@@ -88,12 +95,6 @@ export const NewTransactionForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <Button
-      type="submit"
-      variant="filled"
-      style={{
-        marginTop: 10
-      }}
-    >Create</Button>
-  </form>;
+    <Button type="submit" variant="filled">Create</Button>
+  </FormComponent>;
 };

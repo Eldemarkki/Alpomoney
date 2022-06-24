@@ -9,8 +9,10 @@ import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { Button } from "../../components/Button";
 import styled from "styled-components";
-import { Money } from "../../components/Money";
+import { Money, MoneyHeaderCell } from "../../components/Money";
 import { NewTransactionDialog } from "../../components/NewTransactionDialog";
+import { PageHeader } from "../../components/PageHeader";
+import { NoDataContainer } from "../../components/containers/NoDataContainer";
 
 const TransactionsTable = styled.table({
   marginTop: 30,
@@ -30,19 +32,10 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
   });
 
   return <>
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }}>
-      <h1>Transactions</h1>
-      <Button
-        variant="filled"
-        onClick={() => setDialogOpen(true)}
-      >
-        New transaction
-      </Button>
-    </div>
+    <PageHeader
+      title="Transactions"
+      button={<Button variant="filled" onClick={() => setDialogOpen(true)}>New transaction</Button>}
+    />
     <NewTransactionDialog
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
@@ -51,7 +44,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
     {transactions.length > 0 ? <TransactionsTable>
       <thead>
         <tr>
-          <th style={{ textAlign: "right" }}>Amount</th>
+          <MoneyHeaderCell>Amount</MoneyHeaderCell>
           <th>Description</th>
           <th>Sink</th>
           <th>Storage</th>
@@ -76,21 +69,11 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
           </td>
         </tr>)}
       </tbody>
-    </TransactionsTable> : <div style={{
-      minHeight: 300,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column"
-    }}>
-      <p>No transactions. Create a new one by clicking the button below!</p>
-      <Button
-        variant="filled"
-        onClick={() => setDialogOpen(true)}
-      >
-        New transaction
-      </Button>
-    </div>}
+    </TransactionsTable> : <NoDataContainer
+      text="No transactions. Create a new one by clicking the button below!"
+      buttonText="New transaction"
+      onClick={() => setDialogOpen(true)}
+    />}
   </>;
 }
 

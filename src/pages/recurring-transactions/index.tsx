@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../../app/store";
 import { Button } from "../../components/Button";
-import { Money } from "../../components/Money";
+import { NoDataContainer } from "../../components/containers/NoDataContainer";
+import { Money, MoneyHeaderCell } from "../../components/Money";
 import { NewRecurringTransactionDialog } from "../../components/NewRecurringTransactionDialog";
+import { PageHeader } from "../../components/PageHeader";
 import { setRecurringTransactions } from "../../features/recurringTransactionsSlice";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
@@ -70,6 +72,11 @@ const TransactionsTable = styled.table({
   width: "100%"
 });
 
+const TotalRow = styled.tr({
+  fontWeight: "bold",
+  height: 80
+});
+
 export default function RecurringTransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
 
@@ -88,30 +95,31 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
   const [dialogOpen, setDialogOpen] = useState(false);
   const recurringTransactions = useSelector((state: RootState) => state.recurringTransactions.recurringTransactions);
 
+  const totalCosts = recurringTransactions.reduce((acc, transaction) => {
+    const { daily, weekly, monthly, yearly } = calculateRegularCosts(transaction.amount, transaction.frequency);
+    return {
+      daily: acc.daily + daily,
+      weekly: acc.weekly + weekly,
+      monthly: acc.monthly + monthly,
+      yearly: acc.yearly + yearly
+    };
+  }, { daily: 0, weekly: 0, monthly: 0, yearly: 0 });
+
   return <div>
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }}>
-      <h1>Recurring transactions</h1>
-      <Button
-        variant="filled"
-        onClick={() => setDialogOpen(true)}
-      >
-        New recurring transaction
-      </Button>
-    </div>
+    <PageHeader
+      title="Recurring transactions"
+      button={<Button variant="filled" onClick={() => setDialogOpen(true)}>New recurring transaction</Button>}
+    />
     <NewRecurringTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     {recurringTransactions.length > 0 ? <TransactionsTable>
       <thead>
         <tr>
           <th>Name</th>
           <th>Frequency</th>
-          <th>Price (daily)</th>
-          <th>Price (weekly)</th>
-          <th>Price (monthly)</th>
-          <th>Price (yearly)</th>
+          <MoneyHeaderCell>Price (daily)</MoneyHeaderCell>
+          <MoneyHeaderCell>Price (weekly)</MoneyHeaderCell>
+          <MoneyHeaderCell>Price (monthly)</MoneyHeaderCell>
+          <MoneyHeaderCell>Price (yearly)</MoneyHeaderCell>
           <th>Category</th>
           <th>Next date</th>
           <th />
@@ -141,22 +149,23 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
             </td>
           </tr>;
         })}
+        <TotalRow>
+          <td>Total</td>
+          <td />
+          <Money<"td"> as="td" cents={totalCosts.daily} invertColor />
+          <Money<"td"> as="td" cents={totalCosts.weekly} invertColor />
+          <Money<"td"> as="td" cents={totalCosts.monthly} invertColor />
+          <Money<"td"> as="td" cents={totalCosts.yearly} invertColor />
+          <td />
+          <td />
+          <td />
+        </TotalRow>
       </tbody>
-    </TransactionsTable> : <div style={{
-      minHeight: 300,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column"
-    }}>
-      <p>No recurring transactions. Create a new one by clicking the button below!</p>
-      <Button
-        variant="filled"
-        onClick={() => setDialogOpen(true)}
-      >
-        Create
-      </Button>
-    </div>}
+    </TransactionsTable> : <NoDataContainer
+      text="No recurring transactions. Create a new one by clicking the button below!"
+      buttonText="Create"
+      onClick={() => setDialogOpen(true)}
+    />}
   </div>;
 }
 

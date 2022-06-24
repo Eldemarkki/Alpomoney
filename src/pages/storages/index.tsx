@@ -11,7 +11,7 @@ import { NewStorageDialog } from "../../components/NewStorageDialog";
 import { getRecurringMonthlyExpensesMultiple, getStorageBalances } from "../../utils/storageUtils";
 import styled from "styled-components";
 import { Button } from "../../components/Button";
-import { Money } from "../../components/Money";
+import { Money, MoneyHeaderCell } from "../../components/Money";
 
 const StoragesTable = styled.table({
   width: "100%",
@@ -93,8 +93,8 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
       <thead>
         <tr>
           <th>Name</th>
-          <th style={{ textAlign: "right" }}>Sum</th>
-          <th style={{ textAlign: "right" }}>Monthly expenses</th>
+          <MoneyHeaderCell>Sum</MoneyHeaderCell>
+          <MoneyHeaderCell>Monthly expenses</MoneyHeaderCell>
           <th />
         </tr>
       </thead>
