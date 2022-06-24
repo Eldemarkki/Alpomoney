@@ -23,6 +23,9 @@ const handler: NextApiHandler = async (req, res) => {
     if (typeof req.body.name !== "string") {
       return res.status(400).json({ error: "Name must be a string" });
     }
+    if (req.body.name.length === 0) {
+      return res.status(400).json({ error: "Name can't be empty" });
+    }
 
     let startAmount = 0;
     if (hasKey(req.body, "startAmount")) {
