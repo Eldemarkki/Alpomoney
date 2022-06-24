@@ -19,7 +19,7 @@ export const getTransactionSums = async (storageIds: string[], prisma: PrismaCli
     sums[storageId] = await getTransactionSum(storageId, prisma);
   }
   return sums;
-}
+};
 
 export const getRecurringMonthlyExpenses = async (storageId: string, prisma: PrismaClient): Promise<number> => {
   const monthlyExpenses = await prisma.recurringTransaction.aggregate({
@@ -40,4 +40,22 @@ export const getRecurringMonthlyExpensesMultiple = async (storageIds: string[], 
     monthlyExpenses[storageId] = await getRecurringMonthlyExpenses(storageId, prisma);
   }
   return monthlyExpenses;
-}
+};
+
+export const getStorageBalance = async (storageId: string, prisma: PrismaClient): Promise<number> => {
+  const transactionSum = await getTransactionSum(storageId, prisma);
+  const storage = await prisma.storage.findFirst({
+    where: {
+      id: storageId
+    }
+  });
+  return storage.startAmount - transactionSum;
+};
+
+export const getStorageBalances = async (storageIds: string[], prisma: PrismaClient) => {
+  const balances: Record<string, number> = {};
+  for (const storageId of storageIds) {
+    balances[storageId] = await getStorageBalance(storageId, prisma);
+  }
+  return balances;
+};

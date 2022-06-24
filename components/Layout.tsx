@@ -6,9 +6,12 @@ import { Button } from "./Button";
 
 const GlobalStyles = createGlobalStyle({
   ":root": {
-    "--background-color": "#eaecef",
+    "--primary": "#0a0e1e",
+    "--background-color": "#faebd7",
     "--sidebar-top-color": "#010516",
-    "--sidebar-bottom-color": "#0a0e1e"
+    "--sidebar-active-link-color": "#fffaf4",
+    "--sidebar-inactive-link-color": "#faebd7ba",
+    "--sidebar-hovered-link-color": "#faebd7ff"
   }
 });
 
@@ -25,7 +28,7 @@ const Sidebar = styled.div({
   flexDirection: "column",
   width: 300,
   borderRadius: 16,
-  background: "linear-gradient(to bottom, var(--sidebar-top-color), var(--sidebar-bottom-color))"
+  background: "linear-gradient(to bottom, var(--sidebar-top-color), var(--primary))"
 });
 
 const SidebarTop = styled.div({
@@ -46,11 +49,11 @@ const Content = styled.main({
 });
 
 const StyledLink = styled.a<{ active?: boolean }>(props => ({
-  color: props.active ? "white" : "#999",
+  color: props.active ? "var(--sidebar-active-link-color)" : "var(--sidebar-inactive-link-color)",
   textDecoration: "none",
   transitionDuration: "200ms",
   "&:hover": {
-    color: "#DDD"
+    color: "var(--sidebar-hovered-link-color)"
   }
 }));
 
@@ -88,7 +91,7 @@ export const Layout = (props: PropsWithChildren) => {
       <SidebarBottom>
         <Button
           fullWidth
-          primary
+          variant="primary"
           extraPadding
           onClick={() => {
             console.log("TODO: open new transaction form");

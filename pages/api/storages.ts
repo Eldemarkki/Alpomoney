@@ -24,14 +24,20 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(400).json({ error: "Name must be a string" });
     }
 
-    const startAmount = hasKey(req.body, "startAmount") ? Number(req.body.startAmount) : 0;
+    let startAmount = 0;
+    if (hasKey(req.body, "startAmount")) {
+      if (typeof req.body.startAmount !== "number") {
+        return res.status(400).json({ error: "startAmount must be a number" });
+      }
+      startAmount = req.body.startAmount;
+    }
 
     const prisma = new PrismaClient();
     const storage = await prisma.storage.create({
       data: {
         name: req.body.name,
         userId: req.session.user.id,
-        startAmount: startAmount || 0
+        startAmount
       }
     });
 

@@ -8,7 +8,7 @@ import { removeStorage, setStorages } from "../../features/storagesSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
-import { getRecurringMonthlyExpensesMultiple, getTransactionSums } from "../../utils/storageUtils";
+import { getRecurringMonthlyExpensesMultiple, getStorageBalances } from "../../utils/storageUtils";
 import { moneyToString } from "../../utils/moneyUtils";
 import styled from "styled-components";
 import { Button } from "../../components/Button";
@@ -58,7 +58,7 @@ const StoragesTableRow = ({
 };
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [totalSums, setTotalSums] = useState(props.totalSums);
+  const [totalSums, setTotalSums] = useState(props.storageBalances);
   const [monthlyExpenses, setMonthlyExpenses] = useState(props.monthlyExpenses);
 
   const dispatch = useDispatch();
@@ -123,14 +123,14 @@ export const getServerSideProps = withIronSessionSsr(
 
     const storages = await prisma.storage.findMany({});
 
-    const totalSums = await getTransactionSums(storages.map(s => s.id), prisma);
+    const storageBalances = await getStorageBalances(storages.map(s => s.id), prisma);
     const monthlyExpenses = await getRecurringMonthlyExpensesMultiple(storages.map(s => s.id), prisma);
 
     return {
       props: {
         storages,
         user,
-        totalSums,
+        storageBalances,
         monthlyExpenses
       }
     };
