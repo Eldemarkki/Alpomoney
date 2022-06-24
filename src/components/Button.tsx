@@ -41,14 +41,21 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
 }));
 
 export const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &
-  React.ComponentPropsWithoutRef<"button">>>((props, ref) => (
+  React.ComponentPropsWithoutRef<"button">>>(({
+    loading,
+    extraPadding,
+    variant = "transparent",
+    fullWidth,
+    textColor,
+    ...props
+  }, ref) => (
     <ButtonComponent
-      disabled={props.loading}
-      $extraPadding={props.extraPadding}
-      $variant={props.variant || "transparent"}
-      $fullWidth={props.fullWidth}
-      $textColor={props.textColor}
-      $loading={props.loading}
+      disabled={loading}
+      $extraPadding={extraPadding}
+      $variant={variant}
+      $fullWidth={fullWidth}
+      $textColor={textColor}
+      $loading={loading}
       ref={ref}
       {...props}
     >

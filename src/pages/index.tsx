@@ -1,18 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button } from "../components/Button";
-import { NewTransactionDialog } from "../components/NewTransactionDialog";
 import { setSinks } from "../features/sinksSlice";
 import { setStorages } from "../features/storagesSlice";
 import { sessionSettings } from "../sessions/ironSessionSettings";
 import { moneyToString } from "../utils/moneyUtils";
 
 export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setSinks(props.sinks));
@@ -24,10 +20,6 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
   return <div>
     <h1>Dashboard</h1>
     <p>Welcome back, {props.user.name}</p>
-    <Button onClick={() => setDialogOpen(true)}>
-      New transaction
-    </Button>
-    <NewTransactionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     <div>
       <h2>My Storages</h2>
       <table>
