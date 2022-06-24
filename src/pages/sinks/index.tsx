@@ -8,31 +8,7 @@ import { addSink, removeSink, setSinks } from "../../features/sinksSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { Button } from "../../components/Button";
-
-interface SinkRowProps {
-  sink: Sink
-}
-
-const SinkRow = (props: SinkRowProps) => {
-  const dispatch = useDispatch();
-  const [deleting, setDeleting] = useState(false);
-
-  return <tr>
-    <td>{props.sink.name}</td>
-    <td>
-      <Button
-        loading={deleting}
-        onClick={async () => {
-          setDeleting(true);
-          await axios.delete(`/api/sinks/${props.sink.id}`);
-          dispatch(removeSink(props.sink.id));
-        }}
-      >
-        Delete
-      </Button>
-    </td>
-  </tr>;
-};
+import { Grid } from "../../components/Grid";
 
 export default function SinksPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [name, setName] = useState("");
@@ -45,17 +21,19 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
 
   return <>
     <h1>Sinks</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th />
-        </tr>
-      </thead>
-      <tbody>
-        {sinks.map(sink => <SinkRow key={sink.id} sink={sink} />)}
-      </tbody>
-    </table>
+    <Grid
+      rows={sinks}
+      deleteRow={async sink => {
+        await axios.delete(`/api/sinks/${sink.id}`);
+        dispatch(removeSink(sink.id));
+      }}
+      columns={[
+        {
+          name: "Name",
+          getter: sink => sink.name
+        }
+      ]}
+    />
     <form onSubmit={async e => {
       e.preventDefault();
       const response = await axios.post<Sink>("/api/sinks", {

@@ -1,4 +1,4 @@
-import { PrismaClient, Transaction } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
@@ -8,53 +8,11 @@ import { useDispatch } from "react-redux";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { Button } from "../../components/Button";
-import styled from "styled-components";
-import { Money, MoneyHeaderCell } from "../../components/Money";
+import { Money } from "../../components/Money";
 import { NewTransactionDialog } from "../../components/NewTransactionDialog";
 import { PageHeader } from "../../components/PageHeader";
 import { NoDataContainer } from "../../components/containers/NoDataContainer";
-import { ConvertDates } from "../../utils/types";
-
-const TransactionsTable = styled.table({
-  marginTop: 30,
-  width: "100%"
-});
-
-interface TransactionRowProps {
-  transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  },
-  removeTransaction: (id: string) => void
-}
-
-const TransactionRow = ({ transaction, removeTransaction }: TransactionRowProps) => {
-  const [deleting, setDeleting] = useState(false);
-
-  return <tr>
-    <Money<"td"> as="td" cents={transaction.amount} invertColor />
-    <td>{transaction.description || <i>No description</i>}</td>
-    <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
-    <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
-    <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-    <td align="right">
-      <Button
-        loading={deleting}
-        onClick={async () => {
-          setDeleting(true);
-          await axios.delete(`/api/transactions/${transaction.id}`);
-          removeTransaction(transaction.id);
-        }}
-      >
-        Delete
-      </Button>
-    </td>
-  </tr>;
-};
+import { Grid } from "../../components/Grid";
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
@@ -78,25 +36,36 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
       onClose={() => setDialogOpen(false)}
       onCreate={transaction => setTransactions([...transactions, transaction])}
     />
-    {transactions.length > 0 ? <TransactionsTable>
-      <thead>
-        <tr>
-          <MoneyHeaderCell>Amount</MoneyHeaderCell>
-          <th>Description</th>
-          <th>Sink</th>
-          <th>Storage</th>
-          <th>Created at</th>
-          <th />
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map(transaction => <TransactionRow
-          key={transaction.id}
-          transaction={transaction}
-          removeTransaction={id => setTransactions(transactions.filter(t => t.id !== id))}
-        />)}
-      </tbody>
-    </TransactionsTable> : <NoDataContainer
+    {transactions.length > 0 ? <Grid
+      rows={transactions}
+      deleteRow={async transaction => {
+        await axios.delete(`/api/transactions/${transaction.id}`);
+        setTransactions(transactions.filter(t => t.id !== transaction.id));
+      }}
+      columns={[
+        {
+          name: "Amount",
+          headerAlignment: "right",
+          cellRenderer: transaction => <Money<"td"> as="td" cents={transaction.amount} invertColor />
+        },
+        {
+          name: "Description",
+          getter: transaction => transaction.description || <i>No description</i>
+        },
+        {
+          name: "Sink",
+          getter: transaction => transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>
+        },
+        {
+          name: "Storage",
+          getter: transaction => transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>
+        },
+        {
+          name: "Created at",
+          getter: transaction => new Date(transaction.createdAt).toLocaleString()
+        }
+      ]}
+    /> : <NoDataContainer
       text="No transactions. Create a new one by clicking the button below!"
       buttonText="New transaction"
       onClick={() => setDialogOpen(true)}

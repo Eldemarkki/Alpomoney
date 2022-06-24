@@ -3,7 +3,8 @@ import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Money, MoneyHeaderCell } from "../components/Money";
+import { Grid } from "../components/Grid";
+import { Money } from "../components/Money";
 import { setSinks } from "../features/sinksSlice";
 import { setStorages } from "../features/storagesSlice";
 import { sessionSettings } from "../sessions/ironSessionSettings";
@@ -22,25 +23,25 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
     <p>Welcome back, {props.user.name}</p>
     <div>
       <h2>My Storages</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <MoneyHeaderCell>Sum</MoneyHeaderCell>
-            <MoneyHeaderCell>Spent this month</MoneyHeaderCell>
-          </tr>
-        </thead>
-        <tbody>
-          {[...props.storages]
-            .sort((a, b) => props.totalSums[b.id] - props.totalSums[a.id])
-            .map(storage =>
-              <tr key={storage.id}>
-                <td>{storage.name}</td>
-                <Money<"td"> as="td" cents={props.totalSums[storage.id]} />
-                <Money<"td"> as="td" cents={props.spentThisMonth[storage.id]} invertColor />
-              </tr>)}
-        </tbody>
-      </table>
+      <Grid
+        rows={props.storages}
+        columns={[
+          {
+            name: "Name",
+            getter: storage => storage.name
+          },
+          {
+            name: "Balance",
+            headerAlignment: "right",
+            cellRenderer: storage => <Money<"td"> as="td" cents={props.totalSums[storage.id]} />
+          },
+          {
+            name: "Spent this month",
+            headerAlignment: "right",
+            cellRenderer: storage => <Money<"td"> as="td" cents={props.spentThisMonth[storage.id]} invertColor />
+          }
+        ]}
+      />
     </div>
   </div>;
 }

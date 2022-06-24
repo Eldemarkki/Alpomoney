@@ -1,5 +1,4 @@
 import { PrismaClient, Storage } from "@prisma/client";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
@@ -9,55 +8,10 @@ import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
 import { getRecurringMonthlyExpensesMultiple, getStorageBalances } from "../../utils/storageUtils";
-import styled from "styled-components";
 import { Button } from "../../components/Button";
-import { Money, MoneyHeaderCell } from "../../components/Money";
-
-const StoragesTable = styled.table({
-  width: "100%",
-  borderCollapse: "collapse",
-  marginTop: 32,
-  "td": {
-    borderTop: "1px solid #ccc",
-    borderBottom: "1px solid #ccc",
-    padding: "0px 4px"
-  },
-  "tr": {
-    height: 48
-  }
-});
-
-interface StorageTableRowProps {
-  storage: Storage,
-  sum: number,
-  expenses: number
-}
-
-const StoragesTableRow = ({
-  storage,
-  sum,
-  expenses
-}: StorageTableRowProps) => {
-  const dispatch = useDispatch();
-  const [deleting, setDeleting] = useState(false);
-
-  return <tr>
-    <td>{storage.name}</td>
-    <Money as="td" cents={sum} />
-    <Money as="td" cents={expenses} invertColor />
-    <td align="right">
-      <Button
-        loading={deleting}
-        onClick={async () => {
-          setDeleting(true);
-          await axios.delete(`/api/storages/${storage.id}`);
-          dispatch(removeStorage(storage.id));
-        }}>
-        Delete
-      </Button>
-    </td>
-  </tr>;
-};
+import { Money } from "../../components/Money";
+import { Grid } from "../../components/Grid";
+import axios from "axios";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [totalSums, setTotalSums] = useState(props.storageBalances);
@@ -89,26 +43,35 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
         setMonthlyExpenses({ ...monthlyExpenses, [storage.id]: 0 });
       }}
     />
-    <StoragesTable>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <MoneyHeaderCell>Sum</MoneyHeaderCell>
-          <MoneyHeaderCell>Monthly expenses</MoneyHeaderCell>
-          <th />
-        </tr>
-      </thead>
-      <tbody>
-        {[...storages].sort((a, b) => totalSums[b.id] - totalSums[a.id]).map(storage =>
-          <StoragesTableRow
-            key={storage.id}
-            storage={storage}
-            expenses={monthlyExpenses[storage.id]}
-            sum={totalSums[storage.id]}
-          />
-        )}
-      </tbody>
-    </StoragesTable>
+    <Grid<Storage>
+      rows={[...storages].sort((a, b) => totalSums[b.id] - totalSums[a.id])}
+      deleteRow={async storage => {
+        await axios.delete(`/api/storages/${storage.id}`);
+        dispatch(removeStorage(storage.id));
+      }}
+      columns={[
+        {
+          name: "Name",
+          getter: storage => storage.name
+        },
+        {
+          name: "Balance",
+          getter: storage => totalSums[storage.id],
+          headerAlignment: "right",
+          cellRenderer: storage => {
+            return <Money<"td"> as="td" cents={totalSums[storage.id]} />;
+          }
+        },
+        {
+          name: "Monthly expenses",
+          getter: storage => monthlyExpenses[storage.id],
+          headerAlignment: "right",
+          cellRenderer: storage => {
+            return <Money<"td"> as="td" cents={monthlyExpenses[storage.id]} invertColor />;
+          }
+        }
+      ]}
+    />
   </>;
 }
 
