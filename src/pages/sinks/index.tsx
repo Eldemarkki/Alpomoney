@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
 import { useDispatch, useSelector } from "react-redux";
-import { removeSink, setSinks } from "../../features/sinksSlice";
+import { removeSink, setSinks, setSpendingLast30Days, setTotalSpendings } from "../../features/sinksSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { Button } from "../../components/Button";
@@ -12,6 +12,8 @@ import { Grid } from "../../components/Grid";
 import { PageHeader } from "../../components/PageHeader";
 import { NewSinkDialog } from "../../components/NewSinkDialog";
 import { NoDataContainer } from "../../components/containers/NoDataContainer";
+import { addMonths } from "date-fns";
+import { Money } from "../../components/Money";
 
 export default function SinksPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const sinks = useSelector((state: RootState) => state.sinks.sinks);
@@ -21,6 +23,17 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
   useEffect(() => {
     dispatch(setSinks(props.sinks));
   }, [dispatch, props.sinks]);
+
+  useEffect(() => {
+    dispatch(setTotalSpendings(props.transactionSums));
+  }, [dispatch, props.transactionSums]);
+
+  useEffect(() => {
+    dispatch(setSpendingLast30Days(props.transactionSums30Days));
+  }, [dispatch, props.transactionSums30Days]);
+
+  const transactionSums = useSelector((state: RootState) => state.sinks.totalSpendings);
+  const transactionSums30Days = useSelector((state: RootState) => state.sinks.totalSpendingsLast30Days);
 
   return <>
     <PageHeader
@@ -40,6 +53,16 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
         {
           name: "Name",
           getter: sink => sink.name
+        },
+        {
+          name: "Total spendings",
+          cellRenderer: sink => <Money<"td"> as="td" cents={transactionSums[sink.id]} invertColor />,
+          headerAlignment: "right"
+        },
+        {
+          name: "Last 30 days",
+          cellRenderer: sink => <Money<"td"> as="td" cents={transactionSums30Days[sink.id]} invertColor />,
+          headerAlignment: "right"
         }
       ]}
     /> : <NoDataContainer
@@ -66,10 +89,41 @@ export const getServerSideProps = withIronSessionSsr(
 
     const sinks = await prisma.sink.findMany({});
 
+    const transactionSums: Record<string, number> = {};
+    for (const sink of sinks) {
+      const transactionSum = await prisma.transaction.aggregate({
+        where: {
+          sinkId: sink.id
+        },
+        _sum: {
+          amount: true
+        }
+      });
+      transactionSums[sink.id] = transactionSum._sum.amount || 0;
+    }
+
+    const transactionSums30Days: Record<string, number> = {};
+    for (const sink of sinks) {
+      const transactions = await prisma.transaction.aggregate({
+        where: {
+          sinkId: sink.id,
+          createdAt: {
+            gte: addMonths(new Date(), -1)
+          }
+        },
+        _sum: {
+          amount: true
+        }
+      });
+      transactionSums30Days[sink.id] = transactions._sum.amount || 0;
+    }
+
     return {
       props: {
         sinks,
-        user
+        user,
+        transactionSums,
+        transactionSums30Days
       }
     };
   },

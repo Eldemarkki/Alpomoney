@@ -21,10 +21,10 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setSinks(props.sinks));
-  });
+  }, [dispatch, props.sinks]);
   useEffect(() => {
     dispatch(setStorages(props.storages));
-  });
+  }, [dispatch, props.storages]);
 
   return <>
     <PageHeader

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
 import { useDispatch, useSelector } from "react-redux";
-import { removeStorage, setStorages } from "../../features/storagesSlice";
+import { removeStorage, setStorageBalances, setStorages } from "../../features/storagesSlice";
 import { RootState } from "../../app/store";
 import { InferGetServerSidePropsType } from "next";
 import { NewStorageDialog } from "../../components/NewStorageDialog";
@@ -14,9 +14,9 @@ import { Grid } from "../../components/Grid";
 import axios from "axios";
 import { NoDataContainer } from "../../components/containers/NoDataContainer";
 import { PageHeader } from "../../components/PageHeader";
+import { setTransactions } from "../../features/transactionsSlice";
 
 export default function Storages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [totalSums, setTotalSums] = useState(props.storageBalances);
   const [monthlyExpenses, setMonthlyExpenses] = useState(props.monthlyExpenses);
 
   const dispatch = useDispatch();
@@ -26,7 +26,44 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
     dispatch(setStorages(props.storages));
   }, [dispatch, props.storages]);
 
+  useEffect(() => {
+    dispatch(setStorageBalances(props.storageBalances));
+  }, [dispatch, props.storageBalances]);
+
+  useEffect(() => {
+    dispatch(setTransactions(props.transactions));
+  }, [dispatch, props.transactions]);
+
   const storages = useSelector((state: RootState) => state.storages.storages);
+  const transactions = useSelector((state: RootState) => state.transactions.transactions);
+
+  const totalSums: Record<string, number> = storages.reduce((acc, storage) => {
+    const initial = storage.startAmount;
+    const transactionsSum = transactions
+      .filter(t => t.storageId === storage.id)
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    return {
+      ...acc,
+      [storage.id]: initial - transactionsSum
+    };
+  }, {});
+
+  const now = new Date();
+  const spentThisMonth: Record<string, number> = storages.reduce((acc, storage) => {
+    const transactionsSum = transactions
+      .filter(t => t.storageId === storage.id)
+      .filter(t => {
+        const createdAt = new Date(t.createdAt);
+        return createdAt.getMonth() === now.getMonth() &&
+          createdAt.getFullYear() === now.getFullYear();
+      })
+      .reduce((acc, t) => acc + t.amount, 0);
+    return {
+      ...acc,
+      [storage.id]: transactionsSum
+    };
+  }, {});
 
   return <>
     <PageHeader
@@ -41,7 +78,6 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
       onCreate={storage => {
-        setTotalSums({ ...totalSums, [storage.id]: storage.startAmount });
         setMonthlyExpenses({ ...monthlyExpenses, [storage.id]: 0 });
       }}
     />
@@ -62,7 +98,12 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
           cellRenderer: storage => <Money<"td"> as="td" cents={totalSums[storage.id]} />
         },
         {
-          name: "Monthly expenses",
+          name: "Spent this month",
+          headerAlignment: "right",
+          cellRenderer: storage => <Money<"td"> as="td" cents={spentThisMonth[storage.id]} invertColor />
+        },
+        {
+          name: "Monthly recurring expenses",
           headerAlignment: "right",
           cellRenderer: storage => <Money<"td"> as="td" cents={monthlyExpenses[storage.id]} invertColor />
         }
@@ -93,13 +134,22 @@ export const getServerSideProps = withIronSessionSsr(
 
     const storageBalances = await getStorageBalances(storages.map(s => s.id), prisma);
     const monthlyExpenses = await getRecurringMonthlyExpensesMultiple(storages.map(s => s.id), prisma);
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        userId: user.id
+      }
+    });
 
     return {
       props: {
         storages,
         user,
         storageBalances,
-        monthlyExpenses
+        monthlyExpenses,
+        transactions: transactions.map(t => ({
+          ...t,
+          createdAt: t.createdAt.getTime()
+        }))
       }
     };
   },

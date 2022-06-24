@@ -2,11 +2,13 @@ import { Storage } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface StoragesState {
-  storages: Storage[]
+  storages: Storage[],
+  storageBalances: { [key: string]: number }
 }
 
 const initialState: StoragesState = {
-  storages: []
+  storages: [],
+  storageBalances: {}
 };
 
 export const storagesSlice = createSlice({
@@ -21,9 +23,17 @@ export const storagesSlice = createSlice({
     },
     removeStorage: (state: StoragesState, action: PayloadAction<string>) => {
       state.storages = state.storages.filter(storage => storage.id !== action.payload);
+    },
+    setStorageBalances: (state: StoragesState, action: PayloadAction<{ [key: string]: number }>) => {
+      state.storageBalances = action.payload;
     }
   }
 });
 
-export const { setStorages, addStorage, removeStorage } = storagesSlice.actions;
+export const {
+  setStorages,
+  addStorage,
+  removeStorage,
+  setStorageBalances
+} = storagesSlice.actions;
 export default storagesSlice.reducer;
