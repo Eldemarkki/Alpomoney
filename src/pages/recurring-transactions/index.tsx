@@ -1,4 +1,4 @@
-import { PrismaClient, RecurringTransactionFrequency } from "@prisma/client";
+import { PrismaClient, RecurringTransaction, RecurringTransactionFrequency } from "@prisma/client";
 import axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
@@ -11,10 +11,11 @@ import { NoDataContainer } from "../../components/containers/NoDataContainer";
 import { Money, MoneyHeaderCell } from "../../components/Money";
 import { NewRecurringTransactionDialog } from "../../components/NewRecurringTransactionDialog";
 import { PageHeader } from "../../components/PageHeader";
-import { setRecurringTransactions } from "../../features/recurringTransactionsSlice";
+import { removeRecurringTransaction, setRecurringTransactions } from "../../features/recurringTransactionsSlice";
 import { setSinks } from "../../features/sinksSlice";
 import { setStorages } from "../../features/storagesSlice";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { ConvertDates } from "../../utils/types";
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -77,6 +78,42 @@ const TotalRow = styled.tr({
   height: 80
 });
 
+interface RecurringTransactionRowProps {
+  recurringTransaction: ConvertDates<RecurringTransaction>,
+  costs: { daily: number, weekly: number, monthly: number, yearly: number }
+}
+
+const RecurringTransactionRow = ({
+  recurringTransaction,
+  costs
+}: RecurringTransactionRowProps) => {
+  const [deleting, setDeleting] = useState(false);
+  const dispatch = useDispatch();
+
+  return <tr key={recurringTransaction.id}>
+    <td>{recurringTransaction.name}</td>
+    <td>{formatFrequency(recurringTransaction.frequency)}</td>
+    <Money<"td"> as="td" cents={costs.daily} invertColor />
+    <Money<"td"> as="td" cents={costs.weekly} invertColor />
+    <Money<"td"> as="td" cents={costs.monthly} invertColor />
+    <Money<"td"> as="td" cents={costs.yearly} invertColor />
+    <td>{recurringTransaction.category}</td>
+    <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
+    <td>
+      <Button
+        loading={deleting}
+        onClick={async () => {
+          setDeleting(true);
+          await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`);
+          dispatch(removeRecurringTransaction(recurringTransaction.id));
+        }}
+      >
+        Delete
+      </Button>
+    </td>
+  </tr>;
+};
+
 export default function RecurringTransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const dispatch = useDispatch();
 
@@ -128,26 +165,11 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
       <tbody>
         {recurringTransactions.map(recurringTransaction => {
           const costs = calculateRegularCosts(recurringTransaction.amount, recurringTransaction.frequency);
-          return <tr key={recurringTransaction.id}>
-            <td>{recurringTransaction.name}</td>
-            <td>{formatFrequency(recurringTransaction.frequency)}</td>
-            <Money<"td"> as="td" cents={costs.daily} invertColor />
-            <Money<"td"> as="td" cents={costs.weekly} invertColor />
-            <Money<"td"> as="td" cents={costs.monthly} invertColor />
-            <Money<"td"> as="td" cents={costs.yearly} invertColor />
-            <td>{recurringTransaction.category}</td>
-            <td>{new Date(recurringTransaction.startDate).toLocaleDateString()}</td>
-            <td>
-              <Button onClick={async () => {
-                await axios.delete(`/api/recurringTransactions/${recurringTransaction.id}`);
-                // TODO: Create action `deleteRecurringTransaction`
-                const newTransactions = recurringTransactions.filter(rt => rt.id !== recurringTransaction.id);
-                dispatch(setRecurringTransactions(newTransactions));
-              }}>
-                Delete
-              </Button>
-            </td>
-          </tr>;
+          return <RecurringTransactionRow
+            key={recurringTransaction.id}
+            recurringTransaction={recurringTransaction}
+            costs={costs}
+          />;
         })}
         <TotalRow>
           <td>Total</td>

@@ -23,9 +23,18 @@ export const recurringTransactionsSlice = createSlice({
       state: RecurringTransactionsState,
       action: PayloadAction<ConvertDates<RecurringTransaction>>) => {
       state.recurringTransactions.push(action.payload);
+    },
+    removeRecurringTransaction: (
+      state: RecurringTransactionsState,
+      action: PayloadAction<string>) => {
+      state.recurringTransactions = state.recurringTransactions.filter(t => t.id !== action.payload);
     }
   }
 });
 
-export const { setRecurringTransactions, addRecurringTransaction } = recurringTransactionsSlice.actions;
+export const {
+  setRecurringTransactions,
+  addRecurringTransaction,
+  removeRecurringTransaction
+} = recurringTransactionsSlice.actions;
 export default recurringTransactionsSlice.reducer;

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Property } from "csstype";
 import { TransientProps } from "../utils/types";
+import { Spinner } from "./Spinner";
 
 type ButtonVariant = "primary" | "filled" | "transparent"
 
@@ -59,6 +60,6 @@ export const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildre
       ref={ref}
       {...props}
     >
-      {props.children}
+      {loading ? <Spinner size={15} /> : props.children}
     </ButtonComponent>
   ));

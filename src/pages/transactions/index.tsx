@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Transaction } from "@prisma/client";
 import axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
@@ -13,11 +13,48 @@ import { Money, MoneyHeaderCell } from "../../components/Money";
 import { NewTransactionDialog } from "../../components/NewTransactionDialog";
 import { PageHeader } from "../../components/PageHeader";
 import { NoDataContainer } from "../../components/containers/NoDataContainer";
+import { ConvertDates } from "../../utils/types";
 
 const TransactionsTable = styled.table({
   marginTop: 30,
   width: "100%"
 });
+
+interface TransactionRowProps {
+  transaction: ConvertDates<Transaction> & {
+    Sink: {
+      name: string
+    },
+    Storage: {
+      name: string
+    }
+  },
+  removeTransaction: (id: string) => void
+}
+
+const TransactionRow = ({ transaction, removeTransaction }: TransactionRowProps) => {
+  const [deleting, setDeleting] = useState(false);
+
+  return <tr>
+    <Money<"td"> as="td" cents={transaction.amount} invertColor />
+    <td>{transaction.description || <i>No description</i>}</td>
+    <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
+    <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
+    <td>{new Date(transaction.createdAt).toLocaleString()}</td>
+    <td align="right">
+      <Button
+        loading={deleting}
+        onClick={async () => {
+          setDeleting(true);
+          await axios.delete(`/api/transactions/${transaction.id}`);
+          removeTransaction(transaction.id);
+        }}
+      >
+        Delete
+      </Button>
+    </td>
+  </tr>;
+};
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
@@ -53,21 +90,11 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
         </tr>
       </thead>
       <tbody>
-        {transactions.map(transaction => <tr key={transaction.id}>
-          <Money<"td"> as="td" cents={transaction.amount} invertColor />
-          <td>{transaction.description || <i>No description</i>}</td>
-          <td>{transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>}</td>
-          <td>{transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>}</td>
-          <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-          <td align="right">
-            <Button onClick={async () => {
-              await axios.delete(`/api/transactions/${transaction.id}`);
-              setTransactions(transactions.filter(t => t.id !== transaction.id));
-            }}>
-              Delete
-            </Button>
-          </td>
-        </tr>)}
+        {transactions.map(transaction => <TransactionRow
+          key={transaction.id}
+          transaction={transaction}
+          removeTransaction={id => setTransactions(transactions.filter(t => t.id !== id))}
+        />)}
       </tbody>
     </TransactionsTable> : <NoDataContainer
       text="No transactions. Create a new one by clicking the button below!"
