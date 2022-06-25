@@ -21,23 +21,24 @@ export const DialogContent = styled(RadixDialog.Content)({
   width: "fit-content",
   height: "fit-content",
   padding: 50,
+  paddingTop: 10,
   background: "var(--background-color)",
   borderRadius: 15
 });
 
-const DialogCloseComponent = styled(RadixDialog.Close).attrs({
-  asChild: true
-})({
-  position: "fixed",
-  right: 15,
-  top: 15
+const DialogHeader = styled.div({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginTop: 10,
+  marginBottom: 20
 });
 
-export const DialogClose = () => <DialogCloseComponent>
+export const DialogClose = () => <RadixDialog.Close asChild>
   <Button>
     Close
   </Button>
-</DialogCloseComponent>;
+</RadixDialog.Close>;
 
 interface DialogProps {
   open: boolean,
@@ -49,8 +50,10 @@ export const Dialog = (props: PropsWithChildren<DialogProps>) => {
   return <RadixDialog.Root open={props.open} onOpenChange={isOpen => { if (!isOpen) props.onClose(); }}>
     <DialogOverlay />
     <DialogContent>
-      <DialogClose />
-      <RadixDialog.Title>{props.title}</RadixDialog.Title>
+      <DialogHeader>
+        <RadixDialog.Title>{props.title}</RadixDialog.Title>
+        <DialogClose />
+      </DialogHeader>
       {props.children}
     </DialogContent>
   </RadixDialog.Root>;

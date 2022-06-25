@@ -49,7 +49,7 @@ type NormalProps = Omit<ComponentPropsWithoutRef<"input">, "onChange" | "step">;
 
 export const NumberInput = ({
   initialValue = 0,
-  step = 1,
+  step = 0.01,
   precision = 2,
   onChange,
   ...props
