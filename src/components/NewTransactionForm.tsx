@@ -1,12 +1,15 @@
-import { Transaction } from "@prisma/client";
+import { Select } from "@mantine/core";
+import { Sink, Transaction } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../app/store";
+import { addSink } from "../features/sinksSlice";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
+import { NumberInput } from "./NumberInput";
 
 const FormComponent = styled.form({
   display: "flex",
@@ -34,6 +37,8 @@ export const NewTransactionForm = (props: Props) => {
   const [sinkId, setSinkId] = useState<string>(undefined);
   const [storageId, setStorageId] = useState<string>(undefined);
 
+  const dispatch = useDispatch();
+
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
     const response = await axios.post<ConvertDates<Transaction>>("/api/transactions", {
@@ -60,12 +65,10 @@ export const NewTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
           <td>
-            <input
-              type="number"
-              step={0.01}
+            <NumberInput
               id="amount"
-              value={amount}
-              onChange={e => setAmount(Number(e.target.value))}
+              initialValue={0}
+              onChange={setAmount}
             />
           </td>
         </tr>
@@ -78,19 +81,45 @@ export const NewTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="sinkId">Sink</label></td>
           <td>
-            <select id="sinkId" value={sinkId} onChange={e => setSinkId(e.target.value)}>
-              <option value={""}>Select a sink</option>
-              {availableSinks.map(sink => <option key={sink.id} value={sink.id}>{sink.name}</option>)}
-            </select>
+            <Select
+              id="sinkId"
+              data={availableSinks.map(sink => ({ value: sink.id, label: sink.name }))}
+              value={sinkId}
+              onChange={setSinkId}
+              creatable
+              searchable
+              placeholder="Select a sink"
+              nothingFound="No sinks"
+              getCreateLabel={query => `+ Create ${query}`}
+              onCreate={async sinkName => {
+                const response = await axios.post<ConvertDates<Sink>>("/api/sinks", {
+                  name: sinkName
+                });
+                dispatch(addSink(response.data));
+              }}
+            />
           </td>
         </tr>
         <tr>
           <td><label htmlFor="storageId">Storage</label></td>
           <td>
-            <select id="storageId" value={storageId} onChange={e => setStorageId(e.target.value)}>
-              <option value={""}>Select a storage</option>
-              {availableStorages.map(storage => <option key={storage.id} value={storage.id}>{storage.name}</option>)}
-            </select>
+            <Select
+              id="storageId"
+              data={availableStorages.map(storage => ({ value: storage.id, label: storage.name }))}
+              value={storageId}
+              onChange={setStorageId}
+              creatable
+              searchable
+              placeholder="Select a storage"
+              nothingFound="No storages"
+              getCreateLabel={query => `+ Create ${query}`}
+              onCreate={async storageName => {
+                const response = await axios.post<ConvertDates<Sink>>("/api/storages", {
+                  name: storageName
+                });
+                dispatch(addSink(response.data));
+              }}
+            />
           </td>
         </tr>
       </tbody>

@@ -31,6 +31,6 @@ export const NewSinkForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <Button type="submit">Submit</Button>
+    <Button type="submit" variant="filled">Create</Button>
   </form>;
 };

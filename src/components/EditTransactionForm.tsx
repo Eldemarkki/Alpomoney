@@ -7,6 +7,7 @@ import { RootState } from "../app/store";
 import { centify, decentify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
+import { NumberInput } from "./NumberInput";
 
 interface Props {
   onUpdate?: (transaction: ConvertDates<Transaction> & {
@@ -75,12 +76,10 @@ export const EditTransactionForm = ({
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
           <td>
-            <input
-              type="number"
-              step={0.01}
+            <NumberInput
               id="amount"
-              value={amount}
-              onChange={e => setAmount(Number(e.target.value))}
+              initialValue={decentify(transaction.amount)}
+              onChange={setAmount}
             />
           </td>
         </tr>

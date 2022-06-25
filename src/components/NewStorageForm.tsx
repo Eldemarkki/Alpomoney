@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { addStorage } from "../features/storagesSlice";
 import { centify } from "../utils/moneyUtils";
 import { Button } from "./Button";
+import { NumberInput } from "./NumberInput";
 
 interface Props {
   onCreate: (storage: Storage) => void
@@ -35,17 +36,15 @@ export const NewStorageForm = (props: Props) => {
         <tr>
           <td><label htmlFor="sum">Sum</label></td>
           <td>
-            <input
-              type="number"
-              step={0.01}
+            <NumberInput
               id="sum"
-              value={startAmount}
-              onChange={e => setSum(Number(e.target.value))}
+              initialValue={startAmount}
+              onChange={setSum}
             />
           </td>
         </tr>
       </tbody>
     </table>
-    <Button type="submit">Submit</Button>
+    <Button type="submit" variant="filled">Create</Button>
   </form>;
 };

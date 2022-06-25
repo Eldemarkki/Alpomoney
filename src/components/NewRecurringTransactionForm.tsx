@@ -7,6 +7,7 @@ import { addRecurringTransaction } from "../features/recurringTransactionsSlice"
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
+import { NumberInput } from "./NumberInput";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
@@ -70,12 +71,10 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
           <td>
-            <input
-              type="number"
-              step={0.01}
+            <NumberInput
               id="amount"
-              value={amount}
-              onChange={e => setAmount(Number(e.target.value))}
+              initialValue={0}
+              onChange={setAmount}
             />
           </td>
         </tr>
@@ -142,6 +141,6 @@ export const NewRecurringTransactionForm = (props: Props) => {
         </tr>
       </tbody>
     </table>
-    <Button type="submit">Create</Button>
+    <Button type="submit" variant="filled">Create</Button>
   </form>;
 };

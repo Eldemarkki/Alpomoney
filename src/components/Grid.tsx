@@ -40,6 +40,10 @@ const Table = styled.table({
   }
 });
 
+const ButtonCell = styled.td({
+  width: 0
+});
+
 interface GridRowProps<T extends GridRowType> {
   columns: GridColumn<T>[],
   row: T,
@@ -62,10 +66,10 @@ const GridRow = <T extends GridRowType>({
       }
       return <td key={column.name}>{column.getter(row)}</td>;
     })}
-    {editRow && <td style={{ width: 0 }} align="right">
+    {editRow && <ButtonCell>
       <Button onClick={editRow}>Edit</Button>
-    </td>}
-    {deleteRow && <td style={{ width: 0 }} align="right">
+    </ButtonCell>}
+    {deleteRow && <ButtonCell>
       <Button
         loading={deleting}
         onClick={() => {
@@ -74,7 +78,7 @@ const GridRow = <T extends GridRowType>({
         }}>
         Delete
       </Button>
-    </td>}
+    </ButtonCell>}
   </tr>;
 };
 
