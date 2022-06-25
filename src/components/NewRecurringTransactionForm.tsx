@@ -9,6 +9,7 @@ import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
 import { TextInput } from "./inputs/TextInput";
+import { DatePicker } from "@mantine/dates";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
@@ -144,18 +145,10 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="nextDate">Next date</label></td>
           <td>
-            <input
-              type="date"
+            <DatePicker
               id="nextDate"
-              value={(!isNaN(nextDate.getTime()) ? nextDate : new Date()).toISOString().slice(0, 10)}
-              onChange={e => {
-                try {
-                  setNextDate(new Date(e.target.value));
-                }
-                catch (e) {
-                  setNextDate(new Date());
-                }
-              }}
+              value={nextDate}
+              onChange={setNextDate}
             />
           </td>
         </tr>
