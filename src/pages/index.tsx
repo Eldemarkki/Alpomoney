@@ -47,7 +47,8 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
 }
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
-  if (!req.session.user) {
+  const user = req.session.user;
+  if (!user) {
     return {
       redirect: {
         destination: "/login",
@@ -62,7 +63,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
 
   const storages = await prisma.storage.findMany({
     where: {
-      userId: req.session.user.id
+      userId: user.id
     }
   });
 
@@ -116,7 +117,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
       recurringMonthlyExpenses,
       spentThisMonth,
       totalSums,
-      user: req.session.user
+      user
     }
   };
 }, sessionSettings);

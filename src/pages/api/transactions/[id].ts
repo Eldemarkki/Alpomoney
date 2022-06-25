@@ -2,11 +2,17 @@ import { PrismaClient, Transaction } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { sessionSettings } from "../../../sessions/ironSessionSettings";
-import { hasKey } from "../../../utils/types";
+import { getOptionalValue, getValue, requireAuthentication } from "../../../utils/apiUtils";
+import { numberValidator, stringValidator, uuidValidator } from "../../../utils/apiValidators";
+import { withApiErrorHandling } from "../../../utils/errorHandling";
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "DELETE") {
-    const { id } = req.query;
+    requireAuthentication(req, "You must be logged in to delete a transaction");
+
+    // TODO: Check that the user has access to the transaction
+    const id = getValue(req.query, "id", uuidValidator);
+
     const prisma = new PrismaClient();
     await prisma.transaction.delete({
       where: {
@@ -14,57 +20,25 @@ const handler: NextApiHandler = async (req, res) => {
       }
     });
 
-    return res.status(200).json({ success: true });
+    return res.json({ success: true });
   }
   if (req.method === "PUT") {
-    const { id } = req.query;
+    requireAuthentication(req, "You must be logged in to update a transaction");
 
-    if (!req.session.user) {
-      return res.status(401).json({ error: "You must be logged in to create a transaction" });
-    }
+    // TODO: Check that the user has access to the sink, storage and transaction
+
+    const id = getValue(req.query, "id", uuidValidator);
 
     const editedTransaction: Partial<Transaction> = {};
-    if (hasKey(req.body, "amount")) {
-      if (typeof req.body.amount === "number") {
-        editedTransaction.amount = req.body.amount;
-      }
-      else {
-        return res.status(400).json({ error: "Amount must be a number" });
-      }
-    }
-
-    if (hasKey(req.body, "description")) {
-      if (typeof req.body.description === "string") {
-        editedTransaction.description = req.body.description;
-      }
-      else {
-        return res.status(400).json({ error: "Description must be a string" });
-      }
-    }
-
-    if (hasKey(req.body, "sinkId")) {
-      if (typeof req.body.sinkId === "string" || req.body.sinkId === null || req.body.sinkId === undefined) {
-        // TODO: Check that the user has access to this sink
-        editedTransaction.sinkId = req.body.sinkId;
-      }
-      else {
-        return res.status(400).json({ error: "sinkId must be a string" });
-      }
-    }
-
-    if (hasKey(req.body, "storageId")) {
-      if (typeof req.body.storageId === "string") {
-        editedTransaction.storageId = req.body.storageId;
-      }
-      else {
-        return res.status(400).json({ error: "storageId must be a string" });
-      }
-    }
+    editedTransaction.amount = getOptionalValue(req.body, "amount", numberValidator);
+    editedTransaction.description = getOptionalValue(req.body, "description", stringValidator);
+    editedTransaction.sinkId = getOptionalValue(req.body, "sinkId", uuidValidator);
+    editedTransaction.storageId = getOptionalValue(req.body, "storageId", uuidValidator);
 
     const prisma = new PrismaClient();
     const newTransaction = await prisma.transaction.update({
       where: {
-        id: String(id)
+        id
       },
       data: editedTransaction
     });
@@ -76,4 +50,4 @@ const handler: NextApiHandler = async (req, res) => {
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionSettings);
+export default withApiErrorHandling(withIronSessionApiRoute(handler, sessionSettings));

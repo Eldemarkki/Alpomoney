@@ -2,24 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { hasKey } from "../../utils/types";
+import { getValue } from "../../utils/apiUtils";
+import { nonEmptyStringValidator } from "../../utils/apiValidators";
+import { ApiError } from "next/dist/server/api-utils";
+import { withApiErrorHandling } from "../../utils/errorHandling";
 
-export default withIronSessionApiRoute(
+export default withApiErrorHandling(withIronSessionApiRoute(
   async function loginRoute(req, res) {
-    if (!hasKey(req.body, "username")) {
-      return res.status(400).json({ error: "Missing email" });
-    }
-    if (typeof req.body.username !== "string") {
-      return res.status(400).json({ error: "Username must be a string" });
-    }
-    if (!hasKey(req.body, "password")) {
-      return res.status(400).json({ error: "Missing password" });
-    }
-    if (typeof req.body.password !== "string") {
-      return res.status(400).json({ error: "Password must be a string" });
-    }
+    const username = getValue(req.body, "username", nonEmptyStringValidator);
+    const password = getValue(req.body, "password", nonEmptyStringValidator);
 
-    const { username, password } = req.body;
     const prisma = new PrismaClient();
     const user = await prisma.user.findFirst({
       where: {
@@ -27,21 +19,24 @@ export default withIronSessionApiRoute(
       }
     });
 
+    // Make sure to use the same error, so that an attacker
+    // can't tell if the user exists or not.
+    const error = new ApiError(401, "Invalid username or password");
     if (!user) {
-      return res.status(401).send({ ok: false });
+      throw error;
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
 
-    if (valid) {
-      const { passwordHash: _, ...userWithoutPasswordHash } = user;
-      req.session.user = userWithoutPasswordHash;
-      await req.session.save();
-      res.send({ ok: true });
+    if (!valid) {
+      throw error;
     }
-    else {
-      res.send({ ok: false });
-    }
+
+    const { passwordHash: _, ...userWithoutPasswordHash } = user;
+    req.session.user = userWithoutPasswordHash;
+    await req.session.save();
+
+    res.json(userWithoutPasswordHash);
   },
   sessionSettings
-);
+));

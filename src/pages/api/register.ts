@@ -2,48 +2,36 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { hasKey } from "../../utils/types";
+import { getValue } from "../../utils/apiUtils";
+import { nonEmptyStringValidator } from "../../utils/apiValidators";
+import { withApiErrorHandling } from "../../utils/errorHandling";
 
-export default withIronSessionApiRoute(
+export default withApiErrorHandling(withIronSessionApiRoute(
   async function registerRoute(req, res) {
     if (req.method === "POST") {
+      const username = getValue(req.body, "username", nonEmptyStringValidator);
+      const password = getValue(req.body, "password", nonEmptyStringValidator);
 
-      if (!hasKey(req.body, "username")) {
-        return res.status(400).json({ error: "Missing username" });
-      }
-      if (typeof req.body.username !== "string") {
-        return res.status(400).json({ error: "Username must be a string" });
-      }
-      if (!hasKey(req.body, "password")) {
-        return res.status(400).json({ error: "Missing password" });
-      }
-      if (typeof req.body.password !== "string") {
-        return res.status(400).json({ error: "Password must be a string" });
-      }
+      const prisma = new PrismaClient();
 
-      const { username, password } = req.body;
+      const passwordHash = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({
+        data: {
+          name: username,
+          passwordHash: passwordHash
+        }
+      });
 
-      if (username && password) {
-        const prisma = new PrismaClient();
+      const { passwordHash: _, ...userWithoutPasswordHash } = user;
 
-        const passwordHash = await bcrypt.hash(password, 10);
-        const user = await prisma.user.create({
-          data: {
-            name: username,
-            passwordHash: passwordHash
-          }
-        });
+      req.session.user = userWithoutPasswordHash;
+      await req.session.save();
 
-        const { passwordHash: _, ...userWithoutPasswordHash } = user;
-
-        req.session.user = userWithoutPasswordHash;
-        await req.session.save();
-        res.send({ ok: true });
-      }
-      else {
-        res.send({ ok: false });
-      }
+      return res.json(userWithoutPasswordHash);
+    }
+    else {
+      res.status(405).send(null);
     }
   },
   sessionSettings
-);
+));
