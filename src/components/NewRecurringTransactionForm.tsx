@@ -8,6 +8,7 @@ import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./NumberInput";
+import { TextInput } from "./TextInput";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
@@ -66,7 +67,14 @@ export const NewRecurringTransactionForm = (props: Props) => {
       <tbody>
         <tr>
           <td><label htmlFor="name">Name</label></td>
-          <td><input type="text" id="name" value={name} onChange={e => setName(e.target.value)} /></td>
+          <td>
+            <TextInput
+              id="name"
+              value={name}
+              onChange={setName}
+              placeholder="Name"
+            />
+          </td>
         </tr>
         <tr>
           <td><label htmlFor="amount">Amount</label></td>
@@ -81,7 +89,12 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="description">Description</label></td>
           <td>
-            <input type="text" id="description" value={description} onChange={e => setDescription(e.target.value)} />
+            <TextInput
+              id="description"
+              value={description}
+              onChange={setDescription}
+              placeholder="Description"
+            />
           </td>
         </tr>
         <tr>
@@ -119,7 +132,14 @@ export const NewRecurringTransactionForm = (props: Props) => {
         </tr>
         <tr>
           <td><label htmlFor="category">Category</label></td>
-          <td><input type="text" id="category" value={category} onChange={e => setCategory(e.target.value)} /></td>
+          <td>
+            <TextInput
+              id="category"
+              value={category}
+              onChange={setCategory}
+              placeholder="Category"
+            />
+          </td>
         </tr>
         <tr>
           <td><label htmlFor="nextDate">Next date</label></td>

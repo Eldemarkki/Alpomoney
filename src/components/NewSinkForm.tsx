@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addSink } from "../features/sinksSlice";
 import { Button } from "./Button";
+import { TextInput } from "./TextInput";
 
 interface Props {
   onCreate: (sink: Sink) => void
@@ -27,7 +28,14 @@ export const NewSinkForm = (props: Props) => {
       <tbody>
         <tr>
           <td><label htmlFor="name">Name</label></td>
-          <td><input type="text" id="name" value={name} onChange={e => setName(e.target.value)} /></td>
+          <td>
+            <TextInput
+              id="name"
+              value={name}
+              onChange={setName}
+              placeholder="Name"
+            />
+          </td>
         </tr>
       </tbody>
     </table>

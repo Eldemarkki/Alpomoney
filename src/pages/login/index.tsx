@@ -2,6 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 import { Button } from "../../components/Button";
+import { TextInput } from "../../components/TextInput";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -25,9 +26,19 @@ export default function LoginPage() {
     <h1>Login</h1>
     <form onSubmit={handleSubmit}>
       <label htmlFor="username">Username</label>
-      <input type="text" id="username" onChange={e => setUsername(e.target.value)} value={username} />
+      <TextInput
+        id="username"
+        value={username}
+        onChange={setUsername}
+        placeholder="Username"
+      />
       <label htmlFor="password">Password</label>
-      <input type="password" id="password" onChange={e => setPassword(e.target.value)} value={password} />
+      <TextInput
+        id="password"
+        value={password}
+        onChange={setPassword}
+        placeholder="Password"
+      />
       <Button type="submit">Login</Button>
     </form>
   </div>;

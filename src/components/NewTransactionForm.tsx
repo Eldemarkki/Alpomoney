@@ -10,6 +10,7 @@ import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./NumberInput";
+import { TextInput } from "./TextInput";
 
 const FormComponent = styled.form({
   display: "flex",
@@ -75,7 +76,12 @@ export const NewTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="description">Description</label></td>
           <td>
-            <input type="text" id="description" value={description} onChange={e => setDescription(e.target.value)} />
+            <TextInput
+              id="description"
+              value={description}
+              onChange={setDescription}
+              placeholder="Description"
+            />
           </td>
         </tr>
         <tr>
