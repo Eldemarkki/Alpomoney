@@ -1,48 +1,77 @@
 import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
+import { ApiError } from "next/dist/server/api-utils";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
+import { withApiErrorHandling } from "../../utils/errorHandling";
 import { hasKey } from "../../utils/types";
+
+type TypeValidator<T> = {
+  validate: (value: unknown) => value is T,
+  error: (key: string) => string
+}
+
+const numberValidator: TypeValidator<number> = {
+  validate: (value: unknown): value is number => typeof value === "number",
+  error: (key: string) => `${key} must be a number`
+};
+
+const stringValidator: TypeValidator<string> = {
+  validate: (value: unknown): value is string => typeof value === "string",
+  error: (key: string) => `${key} must be a string`
+};
+
+const uuidValidator: TypeValidator<string> = {
+  validate: (value: unknown): value is string => typeof value === "string" &&
+    value.length === 36 &&
+    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(value),
+  error: (key: string) => `${key} must be a UUID`
+};
+
+const getValue = <T>(body: unknown, key: string, typeValidator: TypeValidator<T>): T => {
+  if (!hasKey(body, key)) {
+    throw new ApiError(400, `${key} is required`);
+  }
+
+  const value = body[key];
+  if (!typeValidator.validate(value)) {
+    throw new ApiError(400, typeValidator.error(key));
+  }
+
+  return value;
+};
+
+const getOptionalValue = <T>(body: unknown, key: string, typeValidator: TypeValidator<T>): T | undefined => {
+  if (!hasKey(body, key)) {
+    return undefined;
+  }
+
+  const value = body[key];
+  if (!typeValidator.validate(value)) {
+    throw new ApiError(400, typeValidator.error(key));
+  }
+
+  return value;
+};
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === "POST") {
     if (!req.session.user) {
-      res.status(401).json({ error: "You must be logged in to create a transaction" });
-      return;
+      throw new ApiError(401, "You most be logged in to create a transaction");
     }
 
-    if (!hasKey(req.body, "amount")) {
-      return res.status(400).json({ error: "Missing amount" });
-    }
-    if (typeof req.body.amount !== "number") {
-      return res.status(400).json({ error: "Amount must be a number" });
-    }
-    if (!hasKey(req.body, "sinkId")) {
-      return res.status(400).json({ error: "Missing sinkId" });
-    }
-    if (typeof req.body.sinkId !== "string") {
-      return res.status(400).json({ error: "sinkId must be a string" });
-    }
-    if (!hasKey(req.body, "storageId")) {
-      return res.status(400).json({ error: "Missing storageId" });
-    }
-    if (typeof req.body.storageId !== "string") {
-      return res.status(400).json({ error: "storageId must be a string" });
-    }
-
-    const description =
-      hasKey(req.body, "description") &&
-        (typeof req.body.description === "string") ?
-        req.body.description :
-        undefined;
+    const amount = getValue(req.body, "amount", numberValidator);
+    const sinkId = getValue(req.body, "sinkId", uuidValidator);
+    const description = getOptionalValue(req.body, "description", stringValidator);
+    const storageId = getValue(req.body, "storageId", uuidValidator);
 
     const prisma = new PrismaClient();
     const transaction = await prisma.transaction.create({
       data: {
-        amount: req.body.amount,
+        amount,
         description,
-        sinkId: req.body.sinkId,
-        storageId: req.body.storageId,
+        sinkId,
+        storageId,
         userId: req.session.user.id
       }
     });
@@ -54,4 +83,4 @@ const handler: NextApiHandler = async (req, res) => {
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionSettings);
+export default withApiErrorHandling(withIronSessionApiRoute(handler, sessionSettings));

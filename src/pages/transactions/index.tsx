@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Transaction } from "@prisma/client";
 import axios from "axios";
 import { withIronSessionSsr } from "iron-session/next";
 import { InferGetServerSidePropsType } from "next";
@@ -13,10 +13,21 @@ import { NewTransactionDialog } from "../../components/NewTransactionDialog";
 import { PageHeader } from "../../components/PageHeader";
 import { NoDataContainer } from "../../components/containers/NoDataContainer";
 import { Grid } from "../../components/Grid";
+import { EditTransactionDialog } from "../../components/EditTransactionDialog";
+import { ConvertDates } from "../../utils/types";
 
 export default function TransactionsPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [transactions, setTransactions] = useState(props.transactions);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newDialogOpen, setNewDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editTransaction, setEditTransaction] = useState<ConvertDates<Transaction> & {
+    Sink: {
+      name: string
+    },
+    Storage: {
+      name: string
+    }
+  } | null>(null);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,18 +40,35 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
   return <>
     <PageHeader
       title="Transactions"
-      button={<Button variant="filled" onClick={() => setDialogOpen(true)}>New transaction</Button>}
+      button={<Button variant="filled" onClick={() => setNewDialogOpen(true)}>New transaction</Button>}
     />
     <NewTransactionDialog
-      open={dialogOpen}
-      onClose={() => setDialogOpen(false)}
+      open={newDialogOpen}
+      onClose={() => setNewDialogOpen(false)}
       onCreate={transaction => setTransactions([...transactions, transaction])}
+    />
+    <EditTransactionDialog
+      transaction={editTransaction}
+      open={editDialogOpen}
+      onClose={() => setEditDialogOpen(false)}
+      onUpdate={transaction => {
+        const index = transactions.findIndex(t => t.id === transaction.id);
+        if (index !== -1) {
+          const newTransactions = [...transactions];
+          newTransactions[index] = transaction;
+          setTransactions(newTransactions);
+        }
+      }}
     />
     {transactions.length > 0 ? <Grid
       rows={transactions}
       deleteRow={async transaction => {
         await axios.delete(`/api/transactions/${transaction.id}`);
         setTransactions(transactions.filter(t => t.id !== transaction.id));
+      }}
+      editRow={transaction => {
+        setEditTransaction(transaction);
+        setEditDialogOpen(true);
       }}
       columns={[
         {
@@ -68,7 +96,7 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
     /> : <NoDataContainer
       text="No transactions. Create a new one by clicking the button below!"
       buttonText="New transaction"
-      onClick={() => setDialogOpen(true)}
+      onClick={() => setNewDialogOpen(true)}
     />}
   </>;
 }

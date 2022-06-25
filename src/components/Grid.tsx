@@ -63,7 +63,7 @@ const GridRow = <T extends GridRowType>({
       return <td key={column.name}>{column.getter(row)}</td>;
     })}
     {editRow && <td style={{ width: 0 }} align="right">
-      <Button>Edit</Button>
+      <Button onClick={editRow}>Edit</Button>
     </td>}
     {deleteRow && <td style={{ width: 0 }} align="right">
       <Button

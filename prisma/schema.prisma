@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                   String                 @id @default(cuid())
+  id                   String                 @id @default(uuid())
   name                 String
   Transaction          Transaction[]
   Storages             Storage[]
@@ -18,7 +18,7 @@ model User {
 }
 
 model Sink {
-  id                   String                 @id @default(cuid())
+  id                   String                 @id @default(uuid())
   name                 String
   Transactions         Transaction[]
   RecurringTransaction RecurringTransaction[]
@@ -28,7 +28,7 @@ model Sink {
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   description String?
   amount      Int
   Sink        Sink?    @relation(fields: [sinkId], references: [id])
@@ -42,7 +42,7 @@ model Transaction {
 }
 
 model Storage {
-  id                   String                 @id @default(cuid())
+  id                   String                 @id @default(uuid())
   name                 String
   Transactions         Transaction[]
   User                 User                   @relation(fields: [userId], references: [id])
@@ -60,7 +60,7 @@ enum RecurringTransactionFrequency {
 }
 
 model RecurringTransaction {
-  id          String                        @id @default(cuid())
+  id          String                        @id @default(uuid())
   amount      Int
   name        String
   description String?
