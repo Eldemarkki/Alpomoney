@@ -1,15 +1,15 @@
-import { Select } from "@mantine/core";
-import { Sink, Transaction } from "@prisma/client";
+import { Transaction } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../app/store";
-import { addSink } from "../features/sinksSlice";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
+import { SinkInput } from "./inputs/SinkInput";
+import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
 
 const FormComponent = styled.form({
@@ -37,8 +37,6 @@ export const NewTransactionForm = (props: Props) => {
   const [description, setDescription] = useState<string>("");
   const [sinkId, setSinkId] = useState<string>(undefined);
   const [storageId, setStorageId] = useState<string>(undefined);
-
-  const dispatch = useDispatch();
 
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
@@ -87,44 +85,20 @@ export const NewTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="sinkId">Sink</label></td>
           <td>
-            <Select
+            <SinkInput
               id="sinkId"
-              data={availableSinks.map(sink => ({ value: sink.id, label: sink.name }))}
-              value={sinkId}
+              sinks={availableSinks}
               onChange={setSinkId}
-              creatable
-              searchable
-              placeholder="Select a sink"
-              nothingFound="No sinks"
-              getCreateLabel={query => `+ Create ${query}`}
-              onCreate={async sinkName => {
-                const response = await axios.post<ConvertDates<Sink>>("/api/sinks", {
-                  name: sinkName
-                });
-                dispatch(addSink(response.data));
-              }}
             />
           </td>
         </tr>
         <tr>
           <td><label htmlFor="storageId">Storage</label></td>
           <td>
-            <Select
+            <StorageInput
               id="storageId"
-              data={availableStorages.map(storage => ({ value: storage.id, label: storage.name }))}
-              value={storageId}
+              storages={availableStorages}
               onChange={setStorageId}
-              creatable
-              searchable
-              placeholder="Select a storage"
-              nothingFound="No storages"
-              getCreateLabel={query => `+ Create ${query}`}
-              onCreate={async storageName => {
-                const response = await axios.post<ConvertDates<Sink>>("/api/storages", {
-                  name: storageName
-                });
-                dispatch(addSink(response.data));
-              }}
             />
           </td>
         </tr>

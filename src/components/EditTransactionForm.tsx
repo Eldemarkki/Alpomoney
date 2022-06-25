@@ -8,6 +8,8 @@ import { centify, decentify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
+import { SinkInput } from "./inputs/SinkInput";
+import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
 
 interface Props {
@@ -98,19 +100,23 @@ export const EditTransactionForm = ({
         <tr>
           <td><label htmlFor="sinkId">Sink</label></td>
           <td>
-            <select id="sinkId" value={sinkId || undefined} onChange={e => setSinkId(e.target.value)}>
-              <option value={""}>Select a sink</option>
-              {sinks.map(sink => <option key={sink.id} value={sink.id}>{sink.name}</option>)}
-            </select>
+            <SinkInput
+              id="sinkId"
+              sinks={sinks}
+              onChange={setSinkId}
+              defaultValue={transaction.sinkId}
+            />
           </td>
         </tr>
         <tr>
           <td><label htmlFor="storageId">Storage</label></td>
           <td>
-            <select id="storageId" value={storageId || undefined} onChange={e => setStorageId(e.target.value)}>
-              <option value={""}>Select a storage</option>
-              {storages.map(storage => <option key={storage.id} value={storage.id}>{storage.name}</option>)}
-            </select>
+            <StorageInput
+              id="storageId"
+              storages={storages}
+              onChange={setStorageId}
+              defaultValue={transaction.storageId}
+            />
           </td>
         </tr>
       </tbody>

@@ -29,7 +29,6 @@ interface GridProps<T extends GridRowType> {
 const Table = styled.table({
   width: "100%",
   borderCollapse: "collapse",
-  marginTop: 32,
   "td": {
     borderTop: "1px solid #ccc",
     borderBottom: "1px solid #ccc",

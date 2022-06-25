@@ -10,6 +10,8 @@ import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
 import { TextInput } from "./inputs/TextInput";
 import { DatePicker } from "@mantine/dates";
+import { SinkInput } from "./inputs/SinkInput";
+import { StorageInput } from "./inputs/StorageInput";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
@@ -116,19 +118,21 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="sinkId">Sink</label></td>
           <td>
-            <select id="sinkId" value={sinkId} onChange={e => setSinkId(e.target.value)}>
-              <option value={undefined}>Select a sink</option>
-              {availableSinks.map(sink => <option key={sink.id} value={sink.id}>{sink.name}</option>)}
-            </select>
+            <SinkInput
+              id="sinkId"
+              sinks={availableSinks}
+              onChange={setSinkId}
+            />
           </td>
         </tr>
         <tr>
           <td><label htmlFor="storageId">Storage</label></td>
           <td>
-            <select id="storageId" value={storageId} onChange={e => setStorageId(e.target.value)}>
-              <option value={undefined}>Select a storage</option>
-              {availableStorages.map(storage => <option key={storage.id} value={storage.id}>{storage.name}</option>)}
-            </select>
+            <StorageInput
+              id="storageId"
+              storages={availableStorages}
+              onChange={setStorageId}
+            />
           </td>
         </tr>
         <tr>
