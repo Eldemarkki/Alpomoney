@@ -7,8 +7,8 @@ import { RootState } from "../app/store";
 import { centify, decentify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
-import { NumberInput } from "./NumberInput";
-import { TextInput } from "./TextInput";
+import { NumberInput } from "./inputs/NumberInput";
+import { TextInput } from "./inputs/TextInput";
 
 interface Props {
   onUpdate?: (transaction: ConvertDates<Transaction> & {

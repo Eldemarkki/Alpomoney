@@ -1,12 +1,4 @@
-import styled from "styled-components";
-
-const TextInputComponent = styled.input({
-  border: "1px solid grey",
-  borderRadius: 5,
-  padding: "5px 10px",
-  width: "100%",
-  height: 35
-});
+import { InputBase } from "./InputBase";
 
 interface TextInputProps {
   onChange?: (value: string) => void
@@ -18,7 +10,7 @@ export const TextInput = ({
   onChange,
   ...props
 }: NormalProps) => {
-  return <TextInputComponent
+  return <InputBase
     onChange={e => onChange && onChange(e.target.value)}
     {...props}
   />;

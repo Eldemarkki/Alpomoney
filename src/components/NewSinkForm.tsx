@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addSink } from "../features/sinksSlice";
 import { Button } from "./Button";
-import { TextInput } from "./TextInput";
+import { TextInput } from "./inputs/TextInput";
 
 interface Props {
   onCreate: (sink: Sink) => void

@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { addStorage } from "../features/storagesSlice";
 import { centify } from "../utils/moneyUtils";
 import { Button } from "./Button";
-import { NumberInput } from "./NumberInput";
-import { TextInput } from "./TextInput";
+import { NumberInput } from "./inputs/NumberInput";
+import { TextInput } from "./inputs/TextInput";
 
 interface Props {
   onCreate: (storage: Storage) => void

@@ -7,8 +7,8 @@ import { addRecurringTransaction } from "../features/recurringTransactionsSlice"
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
-import { NumberInput } from "./NumberInput";
-import { TextInput } from "./TextInput";
+import { NumberInput } from "./inputs/NumberInput";
+import { TextInput } from "./inputs/TextInput";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction> & {

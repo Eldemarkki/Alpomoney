@@ -2,7 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 import { Button } from "../../components/Button";
-import { TextInput } from "../../components/TextInput";
+import { TextInput } from "../../components/inputs/TextInput";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");

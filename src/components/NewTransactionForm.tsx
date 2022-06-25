@@ -9,8 +9,8 @@ import { addSink } from "../features/sinksSlice";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
-import { NumberInput } from "./NumberInput";
-import { TextInput } from "./TextInput";
+import { NumberInput } from "./inputs/NumberInput";
+import { TextInput } from "./inputs/TextInput";
 
 const FormComponent = styled.form({
   display: "flex",

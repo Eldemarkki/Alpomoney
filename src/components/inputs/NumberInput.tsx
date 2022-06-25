@@ -1,5 +1,6 @@
 import { ComponentPropsWithoutRef, useState } from "react";
 import styled from "styled-components";
+import { InputBase } from "./InputBase";
 
 const NumberChangeButton = styled.button<{ side: "up" | "down" }>(props => ({
   width: "100%",
@@ -20,13 +21,6 @@ const Container = styled.div({
   width: 350,
   position: "relative",
   alignItems: "center"
-});
-
-const Input = styled.input({
-  width: "100%",
-  height: 35,
-  border: "none",
-  paddingLeft: 10
 });
 
 const ChangeButtonsContainer = styled.div({
@@ -63,10 +57,11 @@ export const NumberInput = ({
   };
 
   return <Container>
-    <Input
+    <InputBase
       {...props}
       value={value}
       onChange={e => setValue(e.target.value)}
+      onFocus={e => e.target.select()}
       onBlur={e => {
         const newValue = Number(e.target.value);
         if (isNaN(newValue)) {
