@@ -90,22 +90,29 @@ export default function Storages(props: InferGetServerSidePropsType<typeof getSe
       columns={[
         {
           name: "Name",
-          getter: storage => storage.name
+          render: storage => storage.name,
+          sumName: "Sum"
         },
         {
           name: "Balance",
-          headerAlignment: "right",
-          cellRenderer: storage => <Money<"td"> as="td" cents={totalSums[storage.id]} />
+          textAlignment: "right",
+          render: storage => <Money cents={totalSums[storage.id]} />,
+          sumValueGetter: storage => totalSums[storage.id],
+          renderSum: sum => <Money cents={sum} />
         },
         {
           name: "Spent this month",
-          headerAlignment: "right",
-          cellRenderer: storage => <Money<"td"> as="td" cents={spentThisMonth[storage.id]} invertColor />
+          textAlignment: "right",
+          render: storage => <Money cents={spentThisMonth[storage.id]} invertColor />,
+          sumValueGetter: storage => spentThisMonth[storage.id],
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Monthly recurring expenses",
-          headerAlignment: "right",
-          cellRenderer: storage => <Money<"td"> as="td" cents={monthlyExpenses[storage.id]} invertColor />
+          textAlignment: "right",
+          render: storage => <Money cents={monthlyExpenses[storage.id]} invertColor />,
+          sumValueGetter: storage => monthlyExpenses[storage.id],
+          renderSum: sum => <Money cents={sum} invertColor />
         }
       ]}
     /> : <NoDataContainer

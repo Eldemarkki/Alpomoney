@@ -20,7 +20,14 @@ const assertNever = (value: never): never => {
   throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
 };
 
-const calculateRegularCosts = (cost: number, frequency: RecurringTransactionFrequency) => {
+interface RecurringCosts {
+  daily: number,
+  weekly: number,
+  monthly: number,
+  yearly: number
+}
+
+const calculateRecurringCosts = (cost: number, frequency: RecurringTransactionFrequency): RecurringCosts => {
   if (frequency === "DAILY") {
     return {
       daily: cost,
@@ -85,6 +92,15 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
   const [dialogOpen, setDialogOpen] = useState(false);
   const recurringTransactions = useSelector((state: RootState) => state.recurringTransactions.recurringTransactions);
 
+  const transactionCosts: Record<string, RecurringCosts> = recurringTransactions.reduce((acc, transaction) => {
+    const { frequency, amount } = transaction;
+    const costs = calculateRecurringCosts(amount, frequency);
+    return {
+      ...acc,
+      [transaction.id]: costs
+    };
+  }, {});
+
   return <div>
     <PageHeader
       title="Recurring transactions"
@@ -100,47 +116,44 @@ export default function RecurringTransactionsPage(props: InferGetServerSideProps
       columns={[
         {
           name: "Name",
-          getter: transaction => transaction.name
+          render: transaction => transaction.name,
+          sumName: "Sum"
         },
         {
           name: "Frequency",
-          getter: transaction => formatFrequency(transaction.frequency)
+          render: transaction => formatFrequency(transaction.frequency)
         },
         {
           name: "Daily",
-          cellRenderer: transaction =>
-            <Money<"td">
-              as="td"
-              cents={calculateRegularCosts(transaction.amount, transaction.frequency).daily} invertColor />
+          render: transaction => <Money cents={transactionCosts[transaction.id].daily} invertColor />,
+          sumValueGetter: transaction => transactionCosts[transaction.id].daily,
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Weekly",
-          cellRenderer: transaction =>
-            <Money<"td">
-              as="td"
-              cents={calculateRegularCosts(transaction.amount, transaction.frequency).weekly} invertColor />
+          render: transaction => <Money cents={transactionCosts[transaction.id].weekly} invertColor />,
+          sumValueGetter: transaction => transactionCosts[transaction.id].weekly,
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Monthly",
-          cellRenderer: transaction =>
-            <Money<"td">
-              as="td"
-              cents={calculateRegularCosts(transaction.amount, transaction.frequency).monthly} invertColor />
+          render: transaction => <Money cents={transactionCosts[transaction.id].monthly} invertColor />,
+          sumValueGetter: transaction => transactionCosts[transaction.id].monthly,
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Yearly",
-          cellRenderer: transaction =>
-            <Money<"td">
-              as="td"
-              cents={calculateRegularCosts(transaction.amount, transaction.frequency).yearly} invertColor />
+          render: transaction => <Money cents={transactionCosts[transaction.id].yearly} invertColor />,
+          sumValueGetter: transaction => transactionCosts[transaction.id].yearly,
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Category",
-          getter: transaction => transaction.category
+          render: transaction => transaction.category
         },
         {
           name: "Start date",
-          getter: transaction => new Date(transaction.startDate).toLocaleDateString()
+          render: transaction => new Date(transaction.startDate).toLocaleDateString()
         }
       ]}
     /> : <NoDataContainer

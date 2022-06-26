@@ -52,17 +52,22 @@ export default function SinksPage(props: InferGetServerSidePropsType<typeof getS
       columns={[
         {
           name: "Name",
-          getter: sink => sink.name
+          render: sink => sink.name,
+          sumName: "Sum"
         },
         {
           name: "Total spendings",
-          cellRenderer: sink => <Money<"td"> as="td" cents={transactionSums[sink.id]} invertColor />,
-          headerAlignment: "right"
+          sumValueGetter: sink => transactionSums[sink.id] || 0,
+          render: sink => <Money cents={transactionSums[sink.id]} invertColor />,
+          textAlignment: "right",
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Last 30 days",
-          cellRenderer: sink => <Money<"td"> as="td" cents={transactionSums30Days[sink.id]} invertColor />,
-          headerAlignment: "right"
+          render: sink => <Money cents={transactionSums30Days[sink.id]} invertColor />,
+          textAlignment: "right",
+          sumValueGetter: sink => transactionSums30Days[sink.id] || 0,
+          renderSum: sum => <Money cents={sum} invertColor />
         }
       ]}
     /> : <NoDataContainer

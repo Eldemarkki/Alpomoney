@@ -29,3 +29,7 @@ export const isRecurringTransactionFrequency = (value: unknown): value is Recurr
 export const isValidDate = (value: string | number | Date): boolean => {
   return !isNaN(new Date(value).valueOf());
 };
+
+export const isNumber = (value: unknown): value is number => {
+  return typeof value === "number";
+};

@@ -72,25 +72,28 @@ export default function TransactionsPage(props: InferGetServerSidePropsType<type
       }}
       columns={[
         {
-          name: "Amount",
-          headerAlignment: "right",
-          cellRenderer: transaction => <Money<"td"> as="td" cents={transaction.amount} invertColor />
+          name: "Description",
+          render: transaction => transaction.description || <i>No description</i>,
+          sumName: "Sum"
         },
         {
-          name: "Description",
-          getter: transaction => transaction.description || <i>No description</i>
+          name: "Amount",
+          textAlignment: "right",
+          render: transaction => <Money cents={transaction.amount} invertColor />,
+          sumValueGetter: transaction => transaction.amount,
+          renderSum: sum => <Money cents={sum} invertColor />
         },
         {
           name: "Sink",
-          getter: transaction => transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>
+          render: transaction => transaction.Sink ? transaction.Sink.name : <i>Unknown sink</i>
         },
         {
           name: "Storage",
-          getter: transaction => transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>
+          render: transaction => transaction.Storage ? transaction.Storage.name : <i>Unknown storage</i>
         },
         {
           name: "Created at",
-          getter: transaction => new Date(transaction.createdAt).toLocaleString()
+          render: transaction => new Date(transaction.createdAt).toLocaleString()
         }
       ]}
     /> : <NoDataContainer

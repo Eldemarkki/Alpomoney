@@ -28,17 +28,22 @@ export default function Home(props: InferGetServerSidePropsType<typeof getServer
         columns={[
           {
             name: "Name",
-            getter: storage => storage.name
+            render: storage => storage.name,
+            sumName: "Sum"
           },
           {
             name: "Balance",
-            headerAlignment: "right",
-            cellRenderer: storage => <Money<"td"> as="td" cents={props.totalSums[storage.id]} />
+            textAlignment: "right",
+            render: storage => <Money cents={props.totalSums[storage.id]} />,
+            renderSum: sum => <Money cents={sum} />,
+            sumValueGetter: storage => props.totalSums[storage.id]
           },
           {
             name: "Spent this month",
-            headerAlignment: "right",
-            cellRenderer: storage => <Money<"td"> as="td" cents={props.spentThisMonth[storage.id]} invertColor />
+            textAlignment: "right",
+            render: storage => <Money cents={props.spentThisMonth[storage.id]} invertColor />,
+            sumValueGetter: storage => props.spentThisMonth[storage.id],
+            renderSum: sum => <Money cents={sum} invertColor />
           }
         ]}
       />

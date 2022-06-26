@@ -1,22 +1,20 @@
 import { Property } from "csstype";
-import { Fragment, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import styled from "styled-components";
+import { isNumber } from "../utils/types";
 import { Button } from "./Button";
 
 type GridRowType = {
   id: string | number
 }
 
-type GridColumn<T> = {
+type GridColumn<RowType extends GridRowType> = {
   name: string,
-  getter: (row: T) => ReactNode,
-  cellRenderer?: never,
-  headerAlignment?: Property.TextAlign
-} | {
-  name: string,
-  getter?: never,
-  cellRenderer: (row: T) => ReactNode,
-  headerAlignment?: Property.TextAlign
+  sumValueGetter?: (row: RowType) => number,
+  render?: (row: RowType) => ReactNode,
+  textAlignment?: Property.TextAlign,
+  renderSum?: (sum: number) => ReactNode,
+  sumName?: string
 }
 
 interface GridProps<T extends GridRowType> {
@@ -63,12 +61,11 @@ const GridRow = <T extends GridRowType>({
   const [deleting, setDeleting] = useState(false);
 
   return <tr>
-    {columns.map(column => {
-      if (column.cellRenderer) {
-        return <Fragment key={column.name}>{column.cellRenderer(row)}</Fragment>;
-      }
-      return <td key={column.name}>{column.getter(row)}</td>;
-    })}
+    {columns.map(column =>
+      <td style={{ textAlign: column.textAlignment }} key={column.name}>
+        {column.render && column.render(row)}
+      </td>
+    )}
     {editRow && <ButtonCell>
       <Button onClick={editRow}>Edit</Button>
     </ButtonCell>}
@@ -85,6 +82,10 @@ const GridRow = <T extends GridRowType>({
   </tr>;
 };
 
+const SumRow = styled.tr({
+  fontWeight: "bold"
+});
+
 export const Grid = <T extends GridRowType>({
   rows,
   columns,
@@ -96,7 +97,7 @@ export const Grid = <T extends GridRowType>({
       <tr>
         {columns.map(column => <HeaderCell
           key={column.name}
-          textAlign={column.headerAlignment}
+          textAlign={column.textAlignment}
         >
           {column.name}
         </HeaderCell>)}
@@ -110,6 +111,23 @@ export const Grid = <T extends GridRowType>({
         editRow={editRow ? () => editRow(row) : undefined}
         deleteRow={deleteRow ? () => deleteRow(row) : undefined}
       />)}
+      {columns.some(column => column.renderSum || column.sumName || column.sumValueGetter) && <SumRow>
+        {columns.map(column => {
+          if (column.sumValueGetter) {
+            const sum = rows.reduce((sum, row) => {
+              const v = column.sumValueGetter(row);
+              return isNumber(v) ? sum + v : sum;
+            }, 0);
+
+            return <td key={column.name} style={{ textAlign: column.textAlignment }}>
+              {column.renderSum ? column.renderSum(sum) : sum}
+            </td>;
+          }
+          return <td key={column.name} style={{ textAlign: column.textAlignment }}>{column.sumName}</td>;
+        })}
+        {editRow && <td />}
+        {deleteRow && <td />}
+      </SumRow>}
     </tbody>
   </Table>;
 };
