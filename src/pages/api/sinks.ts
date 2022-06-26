@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { getValue, requireAuthentication } from "../../utils/apiUtils";
+import { getValue, requireAuthentication, StatusCodes } from "../../utils/apiUtils";
 import { nonEmptyStringValidator } from "../../utils/apiValidators";
 import { withApiErrorHandling } from "../../utils/errorHandling";
 
@@ -10,9 +10,13 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === "GET") {
     requireAuthentication(req, "You must be logged in to get sinks");
 
-    // TODO: Only return the sinks that the user can see
     const prisma = new PrismaClient();
-    const sinks = await prisma.sink.findMany({});
+    const sinks = await prisma.sink.findMany({
+      where: {
+        userId: req.session.user.id
+      }
+    });
+
     res.json(sinks);
   }
   else if (req.method === "POST") {
@@ -31,7 +35,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.json(sink);
   }
   else {
-    res.status(405).send(null);
+    res.status(StatusCodes.MethodNotAllowed).send(null);
   }
 };
 

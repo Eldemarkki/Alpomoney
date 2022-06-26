@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import bcrypt from "bcryptjs";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { getValue } from "../../utils/apiUtils";
+import { getValue, StatusCodes } from "../../utils/apiUtils";
 import { nonEmptyStringValidator } from "../../utils/apiValidators";
 import { withApiErrorHandling } from "../../utils/errorHandling";
 
@@ -30,7 +30,7 @@ export default withApiErrorHandling(withIronSessionApiRoute(
       return res.json(userWithoutPasswordHash);
     }
     else {
-      res.status(405).send(null);
+      res.status(StatusCodes.MethodNotAllowed).send(null);
     }
   },
   sessionSettings

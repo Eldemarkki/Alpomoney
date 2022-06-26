@@ -1,9 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
-import { ApiError } from "next/dist/server/api-utils";
 import { sessionSettings } from "../../sessions/ironSessionSettings";
-import { getOptionalValue, getValue, requireAuthentication } from "../../utils/apiUtils";
+import {
+  BadRequestError,
+  getOptionalValue,
+  getValue,
+  requireAuthentication,
+  requireResourceAccess,
+  StatusCodes
+} from "../../utils/apiUtils";
 import {
   nonEmptyStringValidator,
   numberValidator,
@@ -32,8 +38,6 @@ const handler: NextApiHandler = async (req, res) => {
   else if (req.method === "POST") {
     requireAuthentication(req, "You must be logged in to create a recurring transaction");
 
-    // TODO: Check that the user has access to the sink and storage
-
     const name = getValue(req.body, "name", nonEmptyStringValidator);
     const amount = getValue(req.body, "amount", numberValidator);
     const sinkId = getValue(req.body, "sinkId", uuidValidator);
@@ -43,10 +47,13 @@ const handler: NextApiHandler = async (req, res) => {
     const startDate = getValue(req.body, "startDate", stringOrNumberValidator);
 
     if (!isValidDate(startDate)) {
-      throw new ApiError(400, "startDate must be a valid date");
+      throw BadRequestError("startDate must be a valid date");
     }
 
     const prisma = new PrismaClient();
+
+    await requireResourceAccess(req.session.user.id, sinkId, "sink", prisma);
+    await requireResourceAccess(req.session.user.id, storageId, "storage", prisma);
 
     const recurringTransaction = await prisma.recurringTransaction.create({
       data: {
@@ -64,7 +71,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.json(recurringTransaction);
   }
   else {
-    res.status(405).send(null);
+    res.status(StatusCodes.MethodNotAllowed).send(null);
   }
 };
 

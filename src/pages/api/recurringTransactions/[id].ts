@@ -2,7 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiHandler } from "next";
 import { sessionSettings } from "../../../sessions/ironSessionSettings";
-import { getValue, requireAuthentication } from "../../../utils/apiUtils";
+import {
+  getValue,
+  requireAuthentication,
+  requireResourceAccess,
+  StatusCodes
+} from "../../../utils/apiUtils";
 import { uuidValidator } from "../../../utils/apiValidators";
 import { withApiErrorHandling } from "../../../utils/errorHandling";
 
@@ -10,11 +15,11 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === "DELETE") {
     requireAuthentication(req, "You must be logged in to delete a recurring transaction");
 
-    // TODO: Check that the user has access to this recurring transaction
-
     const id = getValue(req.query, "id", uuidValidator);
 
     const prisma = new PrismaClient();
+    await requireResourceAccess(req.session.user.id, id, "recurringTransaction", prisma);
+
     await prisma.recurringTransaction.delete({
       where: {
         id
@@ -24,7 +29,7 @@ const handler: NextApiHandler = async (req, res) => {
     return res.json({ success: true });
   }
   else {
-    res.status(405).send(null);
+    res.status(StatusCodes.MethodNotAllowed).send(null);
   }
 };
 
