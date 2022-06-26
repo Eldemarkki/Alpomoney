@@ -43,6 +43,10 @@ const ButtonCell = styled.td({
   width: 0
 });
 
+const RightAlignedHeaderCell = styled.th<{ textAlign: Property.TextAlign }>(props => ({
+  textAlign: props.textAlign
+}));
+
 interface GridRowProps<T extends GridRowType> {
   columns: GridColumn<T>[],
   row: T,
@@ -90,11 +94,12 @@ export const Grid = <T extends GridRowType>({
   return <Table>
     <thead>
       <tr>
-        {columns.map(column => {
-          return <th key={column.name} style={{
-            textAlign: column.headerAlignment || "left"
-          }}>{column.name}</th>;
-        })}
+        {columns.map(column => <RightAlignedHeaderCell
+          key={column.name}
+          textAlign={column.headerAlignment}
+        >
+          {column.name}
+        </RightAlignedHeaderCell>)}
       </tr>
     </thead>
     <tbody>
