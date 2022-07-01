@@ -1,27 +1,13 @@
-import { Transaction } from "@prisma/client";
+import { Transaction } from "../types";
 import { ConvertDates } from "../utils/types";
 import { Dialog } from "./Dialog";
 import { EditTransactionForm } from "./EditTransactionForm";
 
 interface Props {
-  transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  },
+  transaction: ConvertDates<Transaction>,
   open: boolean,
   onClose: () => void,
-  onUpdate?: (transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }) => void
+  onUpdate?: (transaction: ConvertDates<Transaction>) => void
 }
 
 export const EditTransactionDialog = ({
@@ -38,7 +24,9 @@ export const EditTransactionDialog = ({
     <EditTransactionForm
       transaction={transaction}
       onUpdate={transaction => {
-        onUpdate(transaction);
+        if (onUpdate) {
+          onUpdate(transaction);
+        }
         onClose();
       }}
     />

@@ -1,19 +1,12 @@
 import { NewTransactionForm } from "./NewTransactionForm";
 import { Dialog } from "./Dialog";
 import { ConvertDates } from "../utils/types";
-import { Transaction } from "@prisma/client";
+import { Transaction } from "../types";
 
 interface Props {
   open: boolean,
   onClose: () => void,
-  onCreate: (transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }) => void
+  onCreate: (transaction: ConvertDates<Transaction>) => void
 }
 
 export const NewTransactionDialog = (props: Props) => {

@@ -1,8 +1,9 @@
-import { Storage } from "@prisma/client";
+import { Storage } from "../types";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addStorage } from "../features/storagesSlice";
+import { useStorages } from "../hooks/useStorages";
 import { centify } from "../utils/moneyUtils";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
@@ -16,17 +17,12 @@ export const NewStorageForm = (props: Props) => {
   const [name, setName] = useState("");
   const [startAmount, setSum] = useState(0);
 
-  const dispatch = useDispatch();
-
+  const { createStorage } = useStorages();
+  console.log(startAmount);
   return <form onSubmit={async e => {
     e.preventDefault();
-    const response = await axios.post<Storage>("/api/storages", {
-      name,
-      startAmount: centify(startAmount)
-    });
-
-    dispatch(addStorage(response.data));
-    props.onCreate(response.data);
+    const storage = await createStorage(name, centify(startAmount));
+    props.onCreate(storage);
   }}>
     <table>
       <tbody>

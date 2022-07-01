@@ -1,4 +1,4 @@
-import { Transaction } from "@prisma/client";
+import { Transaction } from "../types";
 import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -19,14 +19,7 @@ const FormComponent = styled.form({
 });
 
 interface Props {
-  onCreate?: (transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }) => void
+  onCreate?: (transaction: ConvertDates<Transaction>) => void
 }
 
 export const NewTransactionForm = (props: Props) => {
@@ -35,8 +28,8 @@ export const NewTransactionForm = (props: Props) => {
 
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
-  const [sinkId, setSinkId] = useState<string>(undefined);
-  const [storageId, setStorageId] = useState<string>(undefined);
+  const [sinkId, setSinkId] = useState<string | undefined>(undefined);
+  const [storageId, setStorageId] = useState<string | undefined>(undefined);
 
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
@@ -48,15 +41,7 @@ export const NewTransactionForm = (props: Props) => {
     });
 
     if (props.onCreate) {
-      props.onCreate({
-        ...response.data,
-        Sink: {
-          name: availableSinks.find(sink => sink.id === response.data.sinkId)?.name
-        },
-        Storage: {
-          name: availableStorages.find(storage => storage.id === response.data.storageId)?.name
-        }
-      });
+      props.onCreate(response.data);
     }
   }}>
     <table>

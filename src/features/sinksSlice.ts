@@ -1,5 +1,5 @@
-import { Sink } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Sink } from "../types";
 
 export interface SinksState {
   sinks: Sink[],

@@ -1,4 +1,11 @@
-import { RecurringTransactionFrequency } from "@prisma/client";
+import { RecurringTransactionFrequency, UserId } from "../types";
+
+export type Brand<T, B> = T & { __brand: B };
+
+export type WithIds<T, ID> = T & {
+  id: ID,
+  userId: UserId
+};
 
 export type ConvertDates<T> = {
   [k in keyof T]: (T[k] extends Date ? number : T[k]);
@@ -11,14 +18,14 @@ export type TransientProps<Props> = {
 }
 
 export function hasKey<K extends string>(o: unknown, k: K): o is { [_ in K]: unknown } {
-  return typeof o === "object" && k in o;
+  return o !== null && typeof o === "object" && k in o;
 }
 
 export const recurringTransactionFrequencyValues = [
-  RecurringTransactionFrequency.DAILY,
-  RecurringTransactionFrequency.WEEKLY,
-  RecurringTransactionFrequency.MONTHLY,
-  RecurringTransactionFrequency.YEARLY
+  RecurringTransactionFrequency.daily,
+  RecurringTransactionFrequency.weekly,
+  RecurringTransactionFrequency.monthly,
+  RecurringTransactionFrequency.yearly
 ];
 
 export const isRecurringTransactionFrequency = (value: unknown): value is RecurringTransactionFrequency => {

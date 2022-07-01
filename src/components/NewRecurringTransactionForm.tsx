@@ -1,4 +1,4 @@
-import { RecurringTransaction, RecurringTransactionFrequency } from "@prisma/client";
+
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,28 +12,24 @@ import { TextInput } from "./inputs/TextInput";
 import { DatePicker } from "@mantine/dates";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
+import { useSinks } from "../hooks/useSinks";
+import { useStorages } from "../hooks/useStorages";
+import { RecurringTransaction, RecurringTransactionFrequency, SinkId, StorageId } from "../types";
 
 interface Props {
-  onCreate?: (transaction: ConvertDates<RecurringTransaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }) => void
+  onCreate?: (transaction: ConvertDates<RecurringTransaction>) => void
 }
 
 export const NewRecurringTransactionForm = (props: Props) => {
-  const availableSinks = useSelector((state: RootState) => state.sinks.sinks);
-  const availableStorages = useSelector((state: RootState) => state.storages.storages);
+  const { sinks } = useSinks();
+  const { storages } = useStorages();
 
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
-  const [sinkId, setSinkId] = useState<string>(undefined);
-  const [storageId, setStorageId] = useState<string>(undefined);
-  const [frequency, setFrequency] = useState<RecurringTransactionFrequency>("MONTHLY");
+  const [sinkId, setSinkId] = useState<SinkId | undefined>(undefined);
+  const [storageId, setStorageId] = useState<StorageId | undefined>(undefined);
+  const [frequency, setFrequency] = useState<RecurringTransactionFrequency>(RecurringTransactionFrequency.monthly);
   const [category, setCategory] = useState<string>("");
   const [nextDate, setNextDate] = useState<Date>(new Date());
 
@@ -55,15 +51,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
     dispatch(addRecurringTransaction(response.data));
 
     if (props.onCreate) {
-      props.onCreate({
-        ...response.data,
-        Sink: {
-          name: availableSinks.find(sink => sink.id === response.data.sinkId)?.name
-        },
-        Storage: {
-          name: availableStorages.find(storage => storage.id === response.data.storageId)?.name
-        }
-      });
+      props.onCreate(response.data);
     }
   }}>
     <table>
@@ -108,10 +96,10 @@ export const NewRecurringTransactionForm = (props: Props) => {
               value={frequency}
               onChange={e => setFrequency(e.target.value as RecurringTransactionFrequency)}
             >
-              <option value={"DAILY"}>Daily</option>
-              <option value={"WEEKLY"}>Weekly</option>
-              <option value={"MONTHLY"}>Monthly</option>
-              <option value={"YEARLY"}>Yearly</option>
+              <option value={RecurringTransactionFrequency.daily}>Daily</option>
+              <option value={RecurringTransactionFrequency.weekly}>Weekly</option>
+              <option value={RecurringTransactionFrequency.monthly}>Monthly</option>
+              <option value={RecurringTransactionFrequency.yearly}>Yearly</option>
             </select>
           </td>
         </tr>
@@ -120,7 +108,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
           <td>
             <SinkInput
               id="sinkId"
-              sinks={availableSinks}
+              sinks={sinks}
               onChange={setSinkId}
             />
           </td>
@@ -130,7 +118,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
           <td>
             <StorageInput
               id="storageId"
-              storages={availableStorages}
+              storages={storages}
               onChange={setStorageId}
             />
           </td>
@@ -152,7 +140,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
             <DatePicker
               id="nextDate"
               value={nextDate}
-              onChange={setNextDate}
+              onChange={d => setNextDate(d || new Date())}
             />
           </td>
         </tr>

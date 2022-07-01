@@ -1,4 +1,4 @@
-import { Sink } from "@prisma/client";
+import { Sink } from "../types";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";

@@ -1,5 +1,5 @@
 import { Select, SelectProps } from "@mantine/core";
-import { Storage } from "@prisma/client";
+import { Storage, StorageId } from "../../types";
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,7 @@ import { InputBaseStyles } from "./InputBase";
 
 interface Props {
   storages: Storage[],
-  onChange: (storageId: string) => void
+  onChange: (storageId: StorageId | undefined) => void
 }
 
 export const StorageInput = ({
@@ -17,7 +17,7 @@ export const StorageInput = ({
   onChange,
   ...props
 }: Props & Omit<SelectProps, "data" | "value" | "onChange">) => {
-  const [selectedId, setSelectedId] = useState<string | null>(props.defaultValue);
+  const [selectedId, setSelectedId] = useState<StorageId | null>(props.defaultValue as StorageId | null);
   const dispatch = useDispatch();
 
   return <Select
@@ -27,9 +27,9 @@ export const StorageInput = ({
       label: storage.name
     }))}
     value={selectedId}
-    onChange={id => {
+    onChange={(id: StorageId | null) => {
       setSelectedId(id);
-      onChange(id);
+      onChange(id || undefined);
     }}
     creatable
     searchable
