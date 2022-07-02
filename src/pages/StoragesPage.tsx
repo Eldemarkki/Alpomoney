@@ -8,7 +8,7 @@ import { Grid } from "../components/Grid";
 import axios from "axios";
 import { NoDataContainer } from "../components/containers/NoDataContainer";
 import { PageHeader } from "../components/PageHeader";
-import { RecurringTransaction, Storage, StorageId, Transaction } from "../types";
+import { RecurringTransaction, Storage, StorageId, Transaction } from "@alpomoney/shared";
 import { useStorages } from "../hooks/useStorages";
 import { groupBy, sumBy } from "../utils/collectionUtils";
 import { useTransactions } from "../hooks/useTransactions";

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Sink } from "../types";
+import { Sink } from "@alpomoney/shared";
 
 export interface SinksState {
   sinks: Sink[],

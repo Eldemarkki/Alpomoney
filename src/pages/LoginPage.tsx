@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/inputs/TextInput";
 import { useUser } from "../hooks/useUser";
-import { User } from "../types";
+import { User } from "@alpomoney/shared";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");

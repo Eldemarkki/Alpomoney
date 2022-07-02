@@ -9,38 +9,33 @@ import { NewRecurringTransactionDialog } from "../components/NewRecurringTransac
 import { PageHeader } from "../components/PageHeader";
 import { removeRecurringTransaction } from "../features/recurringTransactionsSlice";
 import { useRecurringTransactions } from "../hooks/useRecurringTransactions";
-import { RecurringTransactionFrequency } from "../types";
+import { RecurringTransactionFrequency } from "@alpomoney/shared";
 
-interface RecurringCosts {
-  daily: number,
-  weekly: number,
-  monthly: number,
-  yearly: number
-}
+type RecurringCosts = Record<RecurringTransactionFrequency, number>;
 
 export const calculateRecurringCosts = (cost: number, frequency: RecurringTransactionFrequency): RecurringCosts => {
-  if (frequency === RecurringTransactionFrequency.daily) {
+  if (frequency === "daily") {
     return {
       daily: cost,
       weekly: cost * 7,
       monthly: cost * 30,
       yearly: cost * 365
     };
-  } else if (frequency === RecurringTransactionFrequency.weekly) {
+  } else if (frequency === "weekly") {
     return {
       daily: cost / 7,
       weekly: cost,
       monthly: cost * 4,
       yearly: cost * 52
     };
-  } else if (frequency === RecurringTransactionFrequency.monthly) {
+  } else if (frequency === "monthly") {
     return {
       daily: cost / 30,
       weekly: cost / 4,
       monthly: cost,
       yearly: cost * 12
     };
-  } else if (frequency === RecurringTransactionFrequency.yearly) {
+  } else if (frequency === "yearly") {
     return {
       daily: cost / 365,
       weekly: cost / 52,
@@ -52,13 +47,13 @@ export const calculateRecurringCosts = (cost: number, frequency: RecurringTransa
 };
 
 const formatFrequency = (frequency: RecurringTransactionFrequency) => {
-  if (frequency === RecurringTransactionFrequency.daily) {
+  if (frequency === "daily") {
     return "Daily";
-  } else if (frequency === RecurringTransactionFrequency.weekly) {
+  } else if (frequency === "weekly") {
     return "Weekly";
-  } else if (frequency === RecurringTransactionFrequency.monthly) {
+  } else if (frequency === "monthly") {
     return "Monthly";
-  } else if (frequency === RecurringTransactionFrequency.yearly) {
+  } else if (frequency === "yearly") {
     return "Yearly";
   }
   throw new Error("Unknown frequency");

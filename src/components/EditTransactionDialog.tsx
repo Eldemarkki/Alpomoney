@@ -1,4 +1,4 @@
-import { Transaction } from "../types";
+import { Transaction } from "@alpomoney/shared";
 import { ConvertDates } from "../utils/types";
 import { Dialog } from "./Dialog";
 import { EditTransactionForm } from "./EditTransactionForm";

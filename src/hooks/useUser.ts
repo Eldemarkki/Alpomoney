@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { User } from "../types";
+import { User } from "@alpomoney/shared";
 
 export const useUser = (reloadLoginState = false) => {
   const { user, setUser, loading, setLoading } = useContext(UserContext);

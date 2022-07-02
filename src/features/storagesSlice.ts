@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Storage } from "../types";
+import { Storage } from "@alpomoney/shared";
 
 export interface StoragesState {
   storages: Storage[],

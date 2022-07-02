@@ -1,10 +1,10 @@
+import { User } from "@alpomoney/shared";
 import axios from "axios";
 import React, { FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/inputs/TextInput";
 import { useUser } from "../hooks/useUser";
-import { User } from "../types";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { addStorage, setStorages } from "../features/storagesSlice";
-import { Storage } from "../types";
+import { Storage } from "@alpomoney/shared";
 
 export const useStorages = () => {
   const storages = useSelector((state: RootState) => state.storages.storages);

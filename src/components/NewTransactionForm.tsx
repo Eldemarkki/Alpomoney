@@ -1,4 +1,4 @@
-import { Transaction } from "../types";
+import { Transaction } from "@alpomoney/shared";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";

@@ -1,4 +1,4 @@
-import { Storage } from "../types";
+import { Storage } from "@alpomoney/shared";
 import { Dialog } from "./Dialog";
 import { NewStorageForm } from "./NewStorageForm";
 

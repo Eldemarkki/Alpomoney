@@ -1,13 +1,6 @@
-import { RecurringTransactionFrequency, UserId } from "../types";
+import { RecurringTransactionFrequency } from "@alpomoney/shared";
 
 export type Brand<T, B> = T & { __brand: B };
-
-export type WithoutIds<T> = Omit<T, "id" | "userId">;
-
-export type WithIds<T, ID> = T & {
-  id: ID,
-  userId: UserId
-};
 
 export type ConvertDates<T> = {
   [k in keyof T]: (T[k] extends Date ? number : T[k]);
@@ -23,16 +16,16 @@ export function hasKey<K extends string>(o: unknown, k: K): o is { [_ in K]: unk
   return o !== null && typeof o === "object" && k in o;
 }
 
-export const recurringTransactionFrequencyValues = [
-  RecurringTransactionFrequency.daily,
-  RecurringTransactionFrequency.weekly,
-  RecurringTransactionFrequency.monthly,
-  RecurringTransactionFrequency.yearly
+const recurringTransactionFrequencyValues = [
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly"
 ];
 
 export const isRecurringTransactionFrequency = (value: unknown): value is RecurringTransactionFrequency => {
   return typeof value === "string" &&
-    recurringTransactionFrequencyValues.includes(value as RecurringTransactionFrequency);
+    recurringTransactionFrequencyValues.includes(value);
 };
 
 export const isValidDate = (value: string | number | Date): boolean => {

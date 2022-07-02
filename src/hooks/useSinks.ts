@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { addSink, setSinks } from "../features/sinksSlice";
-import { Sink } from "../types";
+import { Sink } from "@alpomoney/shared";
 
 export const useSinks = () => {
   const sinks = useSelector((state: RootState) => state.sinks.sinks);

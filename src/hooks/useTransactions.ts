@@ -8,8 +8,8 @@ import {
   setTransactions,
   editTransaction as editTransactionRedux
 } from "../features/transactionsSlice";
-import { Transaction, TransactionId } from "../types";
-import { ConvertDates, WithoutIds } from "../utils/types";
+import { Transaction, TransactionId, WithoutIds } from "@alpomoney/shared";
+import { ConvertDates } from "../utils/types";
 
 export const useTransactions = () => {
   const transactions = useSelector((state: RootState) => state.transactions.transactions).map(transaction => ({

@@ -1,4 +1,4 @@
-import { Storage } from "../types";
+import { Storage } from "@alpomoney/shared";
 import { useState } from "react";
 import { useStorages } from "../hooks/useStorages";
 import { centify } from "../utils/moneyUtils";

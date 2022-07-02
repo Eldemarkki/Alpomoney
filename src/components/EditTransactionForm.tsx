@@ -1,4 +1,4 @@
-import { SinkId, StorageId, Transaction } from "../types";
+import { SinkId, StorageId, Transaction } from "@alpomoney/shared";
 import { useState } from "react";
 import styled from "styled-components";
 import { centify, decentify } from "../utils/moneyUtils";

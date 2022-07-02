@@ -13,7 +13,7 @@ import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
-import { RecurringTransaction, RecurringTransactionFrequency, SinkId, StorageId } from "../types";
+import { RecurringTransaction, RecurringTransactionFrequency, SinkId, StorageId } from "@alpomoney/shared";
 
 interface Props {
   onCreate?: (transaction: ConvertDates<RecurringTransaction>) => void
@@ -28,7 +28,7 @@ export const NewRecurringTransactionForm = (props: Props) => {
   const [description, setDescription] = useState<string>("");
   const [sinkId, setSinkId] = useState<SinkId | undefined>(undefined);
   const [storageId, setStorageId] = useState<StorageId | undefined>(undefined);
-  const [frequency, setFrequency] = useState<RecurringTransactionFrequency>(RecurringTransactionFrequency.monthly);
+  const [frequency, setFrequency] = useState<RecurringTransactionFrequency>("monthly");
   const [category, setCategory] = useState<string>("");
   const [nextDate, setNextDate] = useState<Date>(new Date());
 
@@ -95,10 +95,10 @@ export const NewRecurringTransactionForm = (props: Props) => {
               value={frequency}
               onChange={e => setFrequency(e.target.value as RecurringTransactionFrequency)}
             >
-              <option value={RecurringTransactionFrequency.daily}>Daily</option>
-              <option value={RecurringTransactionFrequency.weekly}>Weekly</option>
-              <option value={RecurringTransactionFrequency.monthly}>Monthly</option>
-              <option value={RecurringTransactionFrequency.yearly}>Yearly</option>
+              <option value={"daily"}>Daily</option>
+              <option value={"weekly"}>Weekly</option>
+              <option value={"monthly"}>Monthly</option>
+              <option value={"yearly"}>Yearly</option>
             </select>
           </td>
         </tr>

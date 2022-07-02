@@ -1,4 +1,4 @@
-import { User } from "../types";
+import { User } from "@alpomoney/shared";
 import { createContext } from "react";
 
 interface UserContextInterface {

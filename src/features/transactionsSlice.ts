@@ -1,4 +1,4 @@
-import { Transaction, TransactionId } from "../types";
+import { Transaction, TransactionId } from "@alpomoney/shared";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ConvertDates } from "../utils/types";
 

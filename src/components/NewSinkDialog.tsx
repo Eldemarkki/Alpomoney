@@ -1,4 +1,4 @@
-import { Sink } from "../types";
+import { Sink } from "@alpomoney/shared";
 import { Dialog } from "./Dialog";
 import { NewSinkForm } from "./NewSinkForm";
 

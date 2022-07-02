@@ -1,4 +1,4 @@
-import { Transaction } from "../types";
+import { Transaction } from "@alpomoney/shared";
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { Money } from "../components/Money";

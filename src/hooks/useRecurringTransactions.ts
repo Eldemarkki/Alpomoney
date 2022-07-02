@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { addRecurringTransaction, setRecurringTransactions } from "../features/recurringTransactionsSlice";
-import { RecurringTransaction } from "../types";
+import { RecurringTransaction } from "@alpomoney/shared";
 import { ConvertDates } from "../utils/types";
 
 export const useRecurringTransactions = () => {

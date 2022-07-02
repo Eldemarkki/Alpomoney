@@ -11,7 +11,7 @@ import { Money } from "../components/Money";
 import { useSinks } from "../hooks/useSinks";
 import { useTransactions } from "../hooks/useTransactions";
 import { groupBy, sumBy } from "../utils/collectionUtils";
-import { SinkId, Transaction } from "../types";
+import { SinkId, Transaction } from "@alpomoney/shared";
 
 export default function SinksPage() {
   const { sinks } = useSinks();

@@ -1,5 +1,5 @@
 import { Select, SelectProps } from "@mantine/core";
-import { Sink, SinkId } from "../../types";
+import { Sink, SinkId } from "@alpomoney/shared";
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";

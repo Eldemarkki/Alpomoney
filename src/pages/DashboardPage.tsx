@@ -3,7 +3,7 @@ import { Money } from "../components/Money";
 import { useStorages } from "../hooks/useStorages";
 import { useTransactions } from "../hooks/useTransactions";
 import { useUser } from "../hooks/useUser";
-import { StorageId, Transaction } from "../types";
+import { StorageId, Transaction } from "@alpomoney/shared";
 import { groupBy, sumBy } from "../utils/collectionUtils";
 
 export const DashboardPage = () => {

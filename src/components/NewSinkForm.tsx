@@ -1,4 +1,4 @@
-import { Sink } from "../types";
+import { Sink } from "@alpomoney/shared";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
