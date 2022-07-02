@@ -15,7 +15,7 @@ export const DashboardPage = () => {
   const storageTransactions: Record<StorageId, Transaction[]> = groupBy(transactions, t => t.storageId);
   const totalSums: Record<StorageId, number> = storages.reduce((acc, storage) => ({
     ...acc,
-    [storage.id]: sumBy(storageTransactions[storage.id] || [], t => -t.amount)
+    [storage.id]: sumBy(storageTransactions[storage.id] || [], t => -t.amount) + storage.initialBalance
   }), {});
 
   const storageTransactionsThisMonth: Record<StorageId, Transaction[]> = groupBy(
