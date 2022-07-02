@@ -1,14 +1,20 @@
-import { User } from "@prisma/client";
+import { User } from "@alpomoney/shared";
 import { createContext } from "react";
 
 interface UserContextInterface {
-  user?: Omit<User, "passwordHash">,
-  setUser: (user: Omit<User, "passwordHash"> | undefined) => void
+  user?: User,
+  setUser: (user: User | undefined) => void,
+  loading: boolean,
+  setLoading: (loading: boolean) => void
 }
 
 export const UserContext = createContext<UserContextInterface>({
   user: undefined,
   setUser: () => {
+    console.log("UserContext not initialized");
+  },
+  loading: true,
+  setLoading: () => {
     console.log("UserContext not initialized");
   }
 });

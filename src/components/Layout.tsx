@@ -1,6 +1,7 @@
-import { PropsWithChildren } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { Sidebar } from "./Sidebar";
+import React from "react";
+import { Outlet } from "react-router";
 
 const GlobalStyles = createGlobalStyle({
   ":root": {
@@ -25,12 +26,12 @@ const Content = styled.main({
   flex: 1
 });
 
-export const Layout = (props: PropsWithChildren) => {
+export const Layout = () => {
   return <Container>
     <GlobalStyles />
     <Sidebar />
     <Content>
-      {props.children}
+      <Outlet />
     </Content>
   </Container>;
 };

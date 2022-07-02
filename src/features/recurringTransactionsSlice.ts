@@ -1,6 +1,6 @@
-import { RecurringTransaction } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ConvertDates } from "../utils/types";
+import { RecurringTransaction } from "@alpomoney/shared";
 
 export interface RecurringTransactionsState {
   recurringTransactions: ConvertDates<RecurringTransaction>[]

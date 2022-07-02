@@ -1,4 +1,6 @@
-import { RecurringTransactionFrequency } from "@prisma/client";
+import { RecurringTransactionFrequency } from "@alpomoney/shared";
+
+export type Brand<T, B> = T & { __brand: B };
 
 export type ConvertDates<T> = {
   [k in keyof T]: (T[k] extends Date ? number : T[k]);
@@ -11,19 +13,19 @@ export type TransientProps<Props> = {
 }
 
 export function hasKey<K extends string>(o: unknown, k: K): o is { [_ in K]: unknown } {
-  return typeof o === "object" && k in o;
+  return o !== null && typeof o === "object" && k in o;
 }
 
-export const recurringTransactionFrequencyValues = [
-  RecurringTransactionFrequency.DAILY,
-  RecurringTransactionFrequency.WEEKLY,
-  RecurringTransactionFrequency.MONTHLY,
-  RecurringTransactionFrequency.YEARLY
+const recurringTransactionFrequencyValues = [
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly"
 ];
 
 export const isRecurringTransactionFrequency = (value: unknown): value is RecurringTransactionFrequency => {
   return typeof value === "string" &&
-    recurringTransactionFrequencyValues.includes(value as RecurringTransactionFrequency);
+    recurringTransactionFrequencyValues.includes(value);
 };
 
 export const isValidDate = (value: string | number | Date): boolean => {

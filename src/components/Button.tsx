@@ -25,7 +25,7 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
     primary: "var(--primary)",
     filled: "var(--primary)",
     transparent: "var(--primary)"
-  }[props.$variant]),
+  }[props.$variant || "transparent"]),
   padding: props.$extraPadding ? "16px 32px" : "8px 16px",
   cursor: "pointer",
   width: props.$fullWidth ? "100%" : "auto",
@@ -33,12 +33,12 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
     primary: "rgb(145, 202, 253)",
     filled: "var(--primary)",
     transparent: "transparent"
-  }[props.$variant]),
+  }[props.$variant || "transparent"]),
   color: props.$textColor ? props.$textColor : ({
     primary: "var(--primary)",
     filled: "white",
     transparent: "var(--primary)"
-  }[props.$variant])
+  }[props.$variant || "transparent"])
 }));
 
 export const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &

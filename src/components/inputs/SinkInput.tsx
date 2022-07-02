@@ -1,5 +1,5 @@
 import { Select, SelectProps } from "@mantine/core";
-import { Sink } from "@prisma/client";
+import { Sink, SinkId } from "@alpomoney/shared";
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,7 @@ import { InputBaseStyles } from "./InputBase";
 
 interface Props {
   sinks: Sink[],
-  onChange: (sinkId: string) => void
+  onChange: (sinkId: SinkId | undefined) => void
 }
 
 export const SinkInput = ({
@@ -17,7 +17,7 @@ export const SinkInput = ({
   onChange,
   ...props
 }: Props & Omit<SelectProps, "data" | "value" | "onChange">) => {
-  const [selectedId, setSelectedId] = useState<string | null>(props.defaultValue);
+  const [selectedId, setSelectedId] = useState<SinkId | null>(props.defaultValue as SinkId | null);
   const dispatch = useDispatch();
 
   return <Select
@@ -27,9 +27,9 @@ export const SinkInput = ({
       label: sink.name
     }))}
     value={selectedId}
-    onChange={id => {
+    onChange={(id: SinkId | null) => {
       setSelectedId(id);
-      onChange(id);
+      onChange(id || undefined);
     }}
     creatable
     searchable

@@ -1,4 +1,4 @@
-import { Transaction } from "@prisma/client";
+import { Transaction, TransactionId } from "@alpomoney/shared";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ConvertDates } from "../utils/types";
 
@@ -16,11 +16,31 @@ export const transactionsSlice = createSlice({
   reducers: {
     setTransactions: (state: TransactionsState, action: PayloadAction<ConvertDates<Transaction>[]>) => {
       state.transactions = action.payload;
+    },
+    addTransaction: (state: TransactionsState, action: PayloadAction<ConvertDates<Transaction>>) => {
+      state.transactions.push(action.payload);
+    },
+    removeTransaction: (state: TransactionsState, action: PayloadAction<string>) => {
+      state.transactions = state.transactions.filter(transaction => transaction.id !== action.payload);
+    },
+    editTransaction: (
+      state: TransactionsState,
+      action: PayloadAction<{ id: TransactionId, data: ConvertDates<Transaction> }>
+    ) => {
+      const { id, data } = action.payload;
+      const index = state.transactions.findIndex(transaction => transaction.id ===
+        id);
+      if (index !== -1) {
+        state.transactions[index] = data;
+      }
     }
   }
 });
 
 export const {
-  setTransactions
+  setTransactions,
+  addTransaction,
+  removeTransaction,
+  editTransaction
 } = transactionsSlice.actions;
 export default transactionsSlice.reducer;

@@ -1,3 +1,4 @@
+import React from "react";
 import { InputBase } from "./InputBase";
 
 interface TextInputProps {

@@ -1,9 +1,6 @@
-import { Transaction } from "@prisma/client";
-import axios from "axios";
+import { SinkId, StorageId, Transaction } from "@alpomoney/shared";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { RootState } from "../app/store";
 import { centify, decentify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";
 import { Button } from "./Button";
@@ -11,24 +8,13 @@ import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
+import { useSinks } from "../hooks/useSinks";
+import { useStorages } from "../hooks/useStorages";
+import { useTransactions } from "../hooks/useTransactions";
 
 interface Props {
-  onUpdate?: (transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }) => void,
-  transaction: ConvertDates<Transaction> & {
-    Sink: {
-      name: string
-    },
-    Storage: {
-      name: string
-    }
-  }
+  onUpdate?: (transaction: ConvertDates<Transaction>) => void,
+  transaction: ConvertDates<Transaction>
 }
 
 const FormComponent = styled.form({
@@ -41,21 +27,26 @@ export const EditTransactionForm = ({
   onUpdate,
   transaction
 }: Props) => {
+  const { editTransaction } = useTransactions();
+
   const [amount, setAmount] = useState(decentify(transaction.amount));
   const [description, setDescription] = useState(transaction.description);
-  const [sinkId, setSinkId] = useState(transaction.sinkId);
-  const [storageId, setStorageId] = useState(transaction.storageId);
+  const [sinkId, setSinkId] = useState<SinkId | undefined>(transaction.sinkId);
+  const [storageId, setStorageId] = useState<StorageId | undefined>(transaction.storageId);
 
-  const sinks = useSelector((state: RootState) => state.sinks.sinks);
-  const storages = useSelector((state: RootState) => state.storages.storages);
-
-  if (!sinks || !storages) {
-    return undefined;
-  }
+  const { sinks } = useSinks();
+  const { storages } = useStorages();
 
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
-    const response = await axios.put<ConvertDates<Transaction>>(`/api/transactions/${transaction.id}`, {
+    if (!sinkId) {
+      return;
+    }
+    if (!storageId) {
+      return;
+    }
+
+    const updated = await editTransaction(transaction.id, {
       amount: centify(amount),
       description,
       sinkId,
@@ -63,15 +54,7 @@ export const EditTransactionForm = ({
     });
 
     if (onUpdate) {
-      onUpdate({
-        ...response.data,
-        Sink: {
-          name: sinks.find(sink => sink.id === response.data.sinkId)?.name
-        },
-        Storage: {
-          name: storages.find(storage => storage.id === response.data.storageId)?.name
-        }
-      });
+      onUpdate(updated);
     }
   }}>
     <table>

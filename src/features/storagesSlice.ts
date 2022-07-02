@@ -1,5 +1,5 @@
-import { Storage } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Storage } from "@alpomoney/shared";
 
 export interface StoragesState {
   storages: Storage[],
@@ -19,6 +19,7 @@ export const storagesSlice = createSlice({
       state.storages = action.payload;
     },
     addStorage: (state: StoragesState, action: PayloadAction<Storage>) => {
+      console.log(action);
       state.storages.push(action.payload);
     },
     removeStorage: (state: StoragesState, action: PayloadAction<string>) => {

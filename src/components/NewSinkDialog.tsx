@@ -1,10 +1,10 @@
-import { Sink } from "@prisma/client";
+import { Sink } from "@alpomoney/shared";
 import { Dialog } from "./Dialog";
 import { NewSinkForm } from "./NewSinkForm";
 
 interface Props {
   open: boolean,
-  onClose?: () => void,
+  onClose: () => void,
   onCreate?: (sink: Sink) => void
 }
 
