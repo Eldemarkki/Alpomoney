@@ -1,5 +1,4 @@
 import { SinkId, StorageId, Transaction } from "../types";
-import axios from "axios";
 import { useState } from "react";
 import styled from "styled-components";
 import { centify, decentify } from "../utils/moneyUtils";
@@ -11,6 +10,7 @@ import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
 import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
+import { useTransactions } from "../hooks/useTransactions";
 
 interface Props {
   onUpdate?: (transaction: ConvertDates<Transaction>) => void,
@@ -27,6 +27,8 @@ export const EditTransactionForm = ({
   onUpdate,
   transaction
 }: Props) => {
+  const { editTransaction } = useTransactions();
+
   const [amount, setAmount] = useState(decentify(transaction.amount));
   const [description, setDescription] = useState(transaction.description);
   const [sinkId, setSinkId] = useState<SinkId | undefined>(transaction.sinkId);
@@ -37,7 +39,14 @@ export const EditTransactionForm = ({
 
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
-    const response = await axios.put<ConvertDates<Transaction>>(`/api/transactions/${transaction.id}`, {
+    if (!sinkId) {
+      return;
+    }
+    if (!storageId) {
+      return;
+    }
+
+    const updated = await editTransaction(transaction.id, {
       amount: centify(amount),
       description,
       sinkId,
@@ -45,7 +54,7 @@ export const EditTransactionForm = ({
     });
 
     if (onUpdate) {
-      onUpdate(response.data);
+      onUpdate(updated);
     }
   }}>
     <table>

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react"
-import { UserContext } from "../contexts/UserContext"
+import { useContext, useEffect } from "react";
+import { UserContext } from "../contexts/UserContext";
 import { User } from "../types";
 
 export const useUser = (reloadLoginState = false) => {
@@ -12,6 +12,7 @@ export const useUser = (reloadLoginState = false) => {
         setUser(response.data);
         setLoading(false);
       }).catch(e => {
+        console.log(e);
         setLoading(false);
       });
     }

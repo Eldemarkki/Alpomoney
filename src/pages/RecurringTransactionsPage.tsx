@@ -18,7 +18,7 @@ interface RecurringCosts {
   yearly: number
 }
 
-const calculateRecurringCosts = (cost: number, frequency: RecurringTransactionFrequency): RecurringCosts => {
+export const calculateRecurringCosts = (cost: number, frequency: RecurringTransactionFrequency): RecurringCosts => {
   if (frequency === RecurringTransactionFrequency.daily) {
     return {
       daily: cost,

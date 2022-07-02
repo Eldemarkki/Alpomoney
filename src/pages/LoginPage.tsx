@@ -18,7 +18,7 @@ export default function LoginPage() {
     axios.post<User>("/api/auth/login", {
       username,
       password
-    }).then((response) => {
+    }).then(response => {
       setUser(response.data);
       navigate("/");
     }).catch(() => {

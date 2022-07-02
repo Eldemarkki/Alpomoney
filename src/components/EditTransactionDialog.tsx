@@ -6,29 +6,19 @@ import { EditTransactionForm } from "./EditTransactionForm";
 interface Props {
   transaction: ConvertDates<Transaction>,
   open: boolean,
-  onClose: () => void,
-  onUpdate?: (transaction: ConvertDates<Transaction>) => void
+  onClose: () => void
 }
 
 export const EditTransactionDialog = ({
   transaction,
   open,
-  onClose,
-  onUpdate
+  onClose
 }: Props) => {
   return <Dialog
     open={open}
     onClose={onClose}
     title="Edit transaction"
   >
-    <EditTransactionForm
-      transaction={transaction}
-      onUpdate={transaction => {
-        if (onUpdate) {
-          onUpdate(transaction);
-        }
-        onClose();
-      }}
-    />
+    <EditTransactionForm transaction={transaction} onUpdate={() => { onClose(); }} />
   </Dialog>;
 };

@@ -1,8 +1,5 @@
 import { Storage } from "../types";
-import axios from "axios";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addStorage } from "../features/storagesSlice";
 import { useStorages } from "../hooks/useStorages";
 import { centify } from "../utils/moneyUtils";
 import { Button } from "./Button";

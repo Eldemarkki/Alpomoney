@@ -14,7 +14,7 @@ import TransactionsPage from "./pages/TransactionsPage";
 import SinksPage from "./pages/SinksPage";
 import RecurringTransactionsPage from "./pages/RecurringTransactionsPage";
 
-const ProtectedRoute = ({ children, ...rest }: { children: JSX.Element }) => {
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useUser();
 
   if (loading) {
@@ -22,14 +22,14 @@ const ProtectedRoute = ({ children, ...rest }: { children: JSX.Element }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" />
+    return <Navigate to="/login" />;
   }
 
   return children;
 };
 
 const AppRoutes = () => {
-  const { } = useUser(true);
+  useUser(true);
 
   return <BrowserRouter>
     <Routes>
@@ -45,7 +45,7 @@ const AppRoutes = () => {
       </Route>
     </Routes>
   </BrowserRouter>;
-}
+};
 
 export const App = () => {
   const [user, setUser] = useState<User | undefined>(undefined);

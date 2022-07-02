@@ -2,6 +2,8 @@ import { RecurringTransactionFrequency, UserId } from "../types";
 
 export type Brand<T, B> = T & { __brand: B };
 
+export type WithoutIds<T> = Omit<T, "id" | "userId">;
+
 export type WithIds<T, ID> = T & {
   id: ID,
   userId: UserId

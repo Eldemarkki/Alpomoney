@@ -1,8 +1,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../app/store";
+import { useDispatch } from "react-redux";
 import { addRecurringTransaction } from "../features/recurringTransactionsSlice";
 import { centify } from "../utils/moneyUtils";
 import { ConvertDates } from "../utils/types";

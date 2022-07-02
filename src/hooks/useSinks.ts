@@ -16,14 +16,14 @@ export const useSinks = () => {
   }, [dispatch]);
 
   const createSink = async (name: string) => {
-    const response = await axios.post<Sink>("/api/sinks", { name }, { withCredentials: true })
+    const response = await axios.post<Sink>("/api/sinks", { name }, { withCredentials: true });
     console.log(response.data);
-    dispatch(addSink(response.data))
+    dispatch(addSink(response.data));
     return response.data;
-  }
+  };
 
   return {
     sinks,
     createSink
-  }
-}
+  };
+};

@@ -16,14 +16,14 @@ export const useStorages = () => {
   }, [dispatch]);
 
   const createStorage = async (name: string, initialBalance: number) => {
-    const response = await axios.post<Storage>("/api/storages", { name, initialBalance }, { withCredentials: true })
+    const response = await axios.post<Storage>("/api/storages", { name, initialBalance }, { withCredentials: true });
     console.log(response.data);
-    dispatch(addStorage(response.data))
+    dispatch(addStorage(response.data));
     return response.data;
   };
 
   return {
     storages,
     createStorage
-  }
+  };
 };

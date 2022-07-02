@@ -4,17 +4,17 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/inputs/TextInput";
 import { useUser } from "../hooks/useUser";
-import { UserId } from "../types";
+import { User } from "../types";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const signupResponse = await axios.post<{ id: UserId, username: string }>("/api/auth/signup", { username, password });
+    const signupResponse = await axios.post<User>("/api/auth/signup", { username, password });
     setUser(signupResponse.data);
 
     navigate("/");

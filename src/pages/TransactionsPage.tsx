@@ -1,5 +1,4 @@
 import { Transaction } from "../types";
-import axios from "axios";
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { Money } from "../components/Money";
@@ -11,15 +10,16 @@ import { EditTransactionDialog } from "../components/EditTransactionDialog";
 import { ConvertDates } from "../utils/types";
 import { useTransactions } from "../hooks/useTransactions";
 import { useStorages } from "../hooks/useStorages";
+import { useSinks } from "../hooks/useSinks";
 
 export default function TransactionsPage() {
-  const { transactions } = useTransactions();
+  const { transactions, deleteTransaction } = useTransactions();
   const { storages } = useStorages();
-  // const {sinks} = useSink
+  const { sinks } = useSinks();
 
   const [newDialogOpen, setNewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editTransaction, setEditTransaction] = useState<ConvertDates<Transaction> | null>(null);
+  const [editingTransaction, setEditTransaction] = useState<ConvertDates<Transaction> | null>(null);
 
   return <>
     <PageHeader
@@ -29,29 +29,15 @@ export default function TransactionsPage() {
     <NewTransactionDialog
       open={newDialogOpen}
       onClose={() => setNewDialogOpen(false)}
-      onCreate={transaction => {
-        console.log(transaction);
-      }}
     />
-    <EditTransactionDialog
-      transaction={editTransaction}
+    {editingTransaction && <EditTransactionDialog
+      transaction={editingTransaction}
       open={editDialogOpen}
       onClose={() => setEditDialogOpen(false)}
-      onUpdate={transaction => {
-        // const index = transactions.findIndex(t => t.id === transaction.id);
-        // if (index !== -1) {
-        //   const newTransactions = [...transactions];
-        //   newTransactions[index] = transaction;
-        //   setTransactions(newTransactions);
-        // }
-      }}
-    />
+    />}
     {transactions.length > 0 ? <Grid
       rows={transactions}
-      deleteRow={async transaction => {
-        // await axios.delete(`/api/transactions/${transaction.id}`);
-        // setTransactions(transactions.filter(t => t.id !== transaction.id));
-      }}
+      deleteRow={row => deleteTransaction(row.id)}
       editRow={transaction => {
         setEditTransaction({
           ...transaction,
@@ -74,15 +60,11 @@ export default function TransactionsPage() {
         },
         {
           name: "Sink",
-          render: transaction => transaction.sinkId ? transaction.sinkId : <i>Unknown sink</i>
+          render: transaction => sinks.find(s => s.id === transaction.sinkId)?.name ?? <i>Unknown sink</i>
         },
         {
           name: "Storage",
-          render: transaction => transaction.storageId ? transaction.storageId : <i>Unknown storage</i>
-        },
-        {
-          name: "Created at",
-          render: transaction => new Date(transaction.createdAt).toLocaleString()
+          render: transaction => storages.find(s => s.id === transaction.storageId)?.name ?? <i>Unknown storage</i>
         }
       ]}
     /> : <NoDataContainer
