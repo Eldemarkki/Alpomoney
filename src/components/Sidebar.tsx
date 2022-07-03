@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button } from "./Button";
 import React from "react";
 import { useUser } from "../hooks/useUser";
+import axios from "axios";
 
 const SidebarComponent = styled.div({
   display: "flex",
@@ -48,6 +49,14 @@ const StyledLink = (props: StyledLinkProps) => {
   </StyledLinkComponent>;
 };
 
+const LogOutLink = () => {
+  return <StyledLinkComponent onClick={() => {
+    axios.post("/api/auth/logout").then(() => window.location.reload()).catch(e => console.error(e));
+  }} to="#">
+    🔐 Log out
+  </StyledLinkComponent>;
+};
+
 export const Sidebar = () => {
   const { user } = useUser();
 
@@ -63,7 +72,7 @@ export const Sidebar = () => {
       <hr />
       {!user && <StyledLink href="/login">🔒 Login</StyledLink>}
       {!user && <StyledLink href="/register">➕ Register</StyledLink>}
-      {user && <StyledLink href="/api/logout">🔐 Log out</StyledLink>}
+      {user && <LogOutLink />}
     </SidebarTop>
     <SidebarBottom>
       <Button
