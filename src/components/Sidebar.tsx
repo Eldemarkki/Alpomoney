@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "./Button";
 import React from "react";
+import { useUser } from "../hooks/useUser";
 
 const SidebarComponent = styled.div({
   display: "flex",
@@ -48,6 +49,8 @@ const StyledLink = (props: StyledLinkProps) => {
 };
 
 export const Sidebar = () => {
+  const { user } = useUser();
+
   return <SidebarComponent>
     <SidebarTop>
       <StyledLink href="/">🏠 Dashboard</StyledLink>
@@ -58,9 +61,9 @@ export const Sidebar = () => {
       <StyledLink href="/storages">🏦 Storages</StyledLink>
       <StyledLink href="/sinks">🛒 Sinks</StyledLink>
       <hr />
-      <StyledLink href="/login">🔒 Login</StyledLink>
-      <StyledLink href="/register">➕ Register</StyledLink>
-      <StyledLink href="/api/logout">🔐 Log out</StyledLink>
+      {!user && <StyledLink href="/login">🔒 Login</StyledLink>}
+      {!user && <StyledLink href="/register">➕ Register</StyledLink>}
+      {user && <StyledLink href="/api/logout">🔐 Log out</StyledLink>}
     </SidebarTop>
     <SidebarBottom>
       <Button
