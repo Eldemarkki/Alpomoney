@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import React, { useState } from "react";
+import { useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import { User } from "@alpomoney/shared";
 import { DashboardPage } from "./pages/DashboardPage";

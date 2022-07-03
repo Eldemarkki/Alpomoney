@@ -1,8 +1,8 @@
-import React from "react";
 import styled from "styled-components";
 import { Property } from "csstype";
 import { TransientProps } from "../utils/types";
 import { Spinner } from "./Spinner";
+import { forwardRef } from "react";
 
 type ButtonVariant = "primary" | "filled" | "transparent"
 
@@ -41,7 +41,7 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
   }[props.$variant || "transparent"])
 }));
 
-export const Button = React.forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &
+export const Button = forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &
   React.ComponentPropsWithoutRef<"button">>>(({
     loading,
     extraPadding,

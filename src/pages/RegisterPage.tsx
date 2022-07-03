@@ -1,6 +1,6 @@
 import { User } from "@alpomoney/shared";
 import axios from "axios";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/inputs/TextInput";

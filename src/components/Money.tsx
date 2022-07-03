@@ -1,4 +1,4 @@
-import React, { ElementType } from "react";
+import { ElementType } from "react";
 import styled from "styled-components";
 import { moneyToString } from "../utils/moneyUtils";
 

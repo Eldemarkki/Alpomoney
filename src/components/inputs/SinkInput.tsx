@@ -1,7 +1,7 @@
 import { Select, SelectProps } from "@mantine/core";
 import { Sink, SinkId } from "@alpomoney/shared";
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addSink } from "../../features/sinksSlice";
 import { ConvertDates } from "../../utils/types";

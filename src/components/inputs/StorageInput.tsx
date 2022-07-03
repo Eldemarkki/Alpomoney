@@ -1,7 +1,7 @@
 import { Select, SelectProps } from "@mantine/core";
 import { Storage, StorageId } from "@alpomoney/shared";
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addStorage } from "../../features/storagesSlice";
 import { ConvertDates } from "../../utils/types";

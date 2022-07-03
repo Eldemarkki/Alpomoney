@@ -1,5 +1,5 @@
 import { Property } from "csstype";
-import React, { ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import styled from "styled-components";
 import { isNumber } from "../utils/types";
 import { Button } from "./Button";

@@ -3,7 +3,6 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "./Button";
-import React from "react";
 import { useUser } from "../hooks/useUser";
 import axios from "axios";
 

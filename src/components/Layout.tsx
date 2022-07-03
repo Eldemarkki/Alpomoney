@@ -1,6 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
 import { Sidebar } from "./Sidebar";
-import React from "react";
 import { Outlet } from "react-router";
 
 const GlobalStyles = createGlobalStyle({
