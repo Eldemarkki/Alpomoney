@@ -13,6 +13,18 @@ import { store } from "./app/store";
 import TransactionsPage from "./pages/TransactionsPage";
 import SinksPage from "./pages/SinksPage";
 import RecurringTransactionsPage from "./pages/RecurringTransactionsPage";
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyles = createGlobalStyle({
+  ":root": {
+    "--primary": "#0a0e1e",
+    "--background-color": "#faebd7",
+    "--sidebar-top-color": "#010516",
+    "--sidebar-active-link-color": "#fffaf4",
+    "--sidebar-inactive-link-color": "#faebd7ba",
+    "--sidebar-hovered-link-color": "#faebd7ff"
+  }
+});
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useUser();
@@ -52,6 +64,7 @@ export const App = () => {
   const [loading, setLoading] = useState(true);
 
   return <div>
+    <GlobalStyles />
     <UserContext.Provider value={{ user, setUser, loading, setLoading }}>
       <Provider store={store}>
         <AppRoutes />

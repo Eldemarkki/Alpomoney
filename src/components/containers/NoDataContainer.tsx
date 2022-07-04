@@ -20,7 +20,7 @@ export const NoDataContainer = (props: NoDataContainerProps) => {
     <p>{props.text}</p>
     {props.buttonText && props.onClick && <Button
       variant="filled"
-      onClick={() => props.onClick()}>
+      onClick={() => props.onClick && props.onClick()}>
       {props.buttonText}
     </Button>}
   </Container>;
