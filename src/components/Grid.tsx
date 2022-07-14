@@ -113,9 +113,10 @@ export const Grid = <T extends GridRowType>({
       />)}
       {columns.some(column => column.renderSum || column.sumName || column.sumValueGetter) && <SumRow>
         {columns.map(column => {
-          if (column.sumValueGetter) {
+          const sumValueGetter = column.sumValueGetter;
+          if (sumValueGetter) {
             const sum = rows.reduce((sum, row) => {
-              const v = column.sumValueGetter(row);
+              const v = sumValueGetter(row);
               return isNumber(v) ? sum + v : sum;
             }, 0);
 
