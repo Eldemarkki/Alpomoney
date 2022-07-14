@@ -3,6 +3,7 @@ import { Property } from "csstype";
 import { TransientProps } from "../utils/types";
 import { Spinner } from "./Spinner";
 import { forwardRef } from "react";
+import { themeVariables } from "../theme/variables";
 
 type ButtonVariant = "primary" | "filled" | "transparent"
 
@@ -22,22 +23,22 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
   borderStyle: "solid",
   borderRadius: 12,
   borderColor: ({
-    primary: "var(--primary)",
-    filled: "var(--primary)",
-    transparent: "var(--primary)"
+    primary: themeVariables.colors.primary,
+    filled: themeVariables.colors.primary,
+    transparent: themeVariables.colors.primary
   }[props.$variant || "transparent"]),
   padding: props.$extraPadding ? "16px 32px" : "8px 16px",
   cursor: "pointer",
   width: props.$fullWidth ? "100%" : "auto",
   backgroundColor: ({
     primary: "rgb(145, 202, 253)",
-    filled: "var(--primary)",
+    filled: themeVariables.colors.primary,
     transparent: "transparent"
   }[props.$variant || "transparent"]),
   color: props.$textColor ? props.$textColor : ({
-    primary: "var(--primary)",
+    primary: themeVariables.colors.primary,
     filled: "white",
-    transparent: "var(--primary)"
+    transparent: themeVariables.colors.primary
   }[props.$variant || "transparent"])
 }));
 

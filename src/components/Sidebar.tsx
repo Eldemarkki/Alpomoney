@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Button } from "./Button";
 import { useUser } from "../hooks/useUser";
 import axios from "axios";
+import { themeVariables } from "../theme/variables";
 
 const SidebarComponent = styled.div({
   display: "flex",
@@ -12,15 +13,15 @@ const SidebarComponent = styled.div({
   flexDirection: "column",
   width: 300,
   borderRadius: 16,
-  background: "linear-gradient(to bottom, var(--sidebar-top-color), var(--primary))"
+  background: `linear-gradient(to bottom, ${themeVariables.colors.sidebar.top}, ${themeVariables.colors.primary})`
 });
 
 const StyledLinkComponent = styled(Link)<{ $isLinkActive?: boolean }>(props => ({
-  color: props.$isLinkActive ? "var(--sidebar-active-link-color)" : "var(--sidebar-inactive-link-color)",
+  color: props.$isLinkActive ? themeVariables.colors.sidebar.link.active : themeVariables.colors.sidebar.link.inactive,
   textDecoration: "none",
   transitionDuration: "200ms",
   "&:hover": {
-    color: "var(--sidebar-hovered-link-color)"
+    color: themeVariables.colors.sidebar.link.hovered
   }
 }));
 

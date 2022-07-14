@@ -14,15 +14,16 @@ import TransactionsPage from "./pages/TransactionsPage";
 import SinksPage from "./pages/SinksPage";
 import RecurringTransactionsPage from "./pages/RecurringTransactionsPage";
 import { createGlobalStyle } from "styled-components";
+import { themeVariableNames } from "./theme/variables";
 
 const GlobalStyles = createGlobalStyle({
   ":root": {
-    "--primary": "#0a0e1e",
-    "--background-color": "#faebd7",
-    "--sidebar-top-color": "#010516",
-    "--sidebar-active-link-color": "#fffaf4",
-    "--sidebar-inactive-link-color": "#faebd7ba",
-    "--sidebar-hovered-link-color": "#faebd7ff"
+    [themeVariableNames.primaryVariableName]: "#0a0e1e",
+    [themeVariableNames.backgroundColorVariableName]: "#faebd7",
+    [themeVariableNames.sidebarTopColorVariableName]: "#010516",
+    [themeVariableNames.sidebarActiveLinkColorVariableName]: "#fffaf4",
+    [themeVariableNames.sidebarInactiveLinkColorVariableName]: "#faebd7ba",
+    [themeVariableNames.sidebarHoveredLinkColorVariableName]: "#faebd7ff"
   }
 });
 

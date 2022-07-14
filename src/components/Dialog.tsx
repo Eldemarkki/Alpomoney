@@ -1,6 +1,7 @@
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
+import { themeVariables } from "../theme/variables";
 import { Button } from "./Button";
 
 export const DialogOverlay = styled(RadixDialog.Overlay)({
@@ -22,7 +23,7 @@ export const DialogContent = styled(RadixDialog.Content)({
   height: "fit-content",
   padding: 50,
   paddingTop: 10,
-  background: "var(--background-color)",
+  background: themeVariables.colors.background,
   borderRadius: 15
 });
 
