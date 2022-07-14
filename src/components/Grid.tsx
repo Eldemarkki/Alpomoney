@@ -97,7 +97,7 @@ export const Grid = <T extends GridRowType>({
       <tr>
         {columns.map(column => <HeaderCell
           key={column.name}
-          textAlign={column.textAlignment}
+          textAlign={column.textAlignment || "left"}
         >
           {column.name}
         </HeaderCell>)}
