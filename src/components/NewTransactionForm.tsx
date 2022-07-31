@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { centify } from "../utils/moneyUtils";
-import { ConvertDates } from "../utils/types";
+import { ConvertDates, isValidDate } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
@@ -13,7 +13,6 @@ import { TextInput } from "./inputs/TextInput";
 import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
 import { addTransaction } from "../features/transactionsSlice";
-import { DatePicker } from "@mantine/dates";
 
 const FormComponent = styled.form({
   display: "flex",
@@ -96,10 +95,12 @@ export const NewTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="createdAt">Date</label></td>
           <td>
-            <DatePicker
+            <input
               id="createdAt"
-              value={createdAt}
-              onChange={d => setCreatedAt(d || new Date())}
+              type="date"
+              value={createdAt?.toISOString().split("T")[0]}
+              onChange={e =>
+                setCreatedAt(isValidDate(new Date(e.target.value)) ? new Date(e.target.value) : new Date())}
             />
           </td>
         </tr>

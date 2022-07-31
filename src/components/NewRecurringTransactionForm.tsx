@@ -4,11 +4,10 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addRecurringTransaction } from "../features/recurringTransactionsSlice";
 import { centify } from "../utils/moneyUtils";
-import { ConvertDates } from "../utils/types";
+import { ConvertDates, isValidDate } from "../utils/types";
 import { Button } from "./Button";
 import { NumberInput } from "./inputs/NumberInput";
 import { TextInput } from "./inputs/TextInput";
-import { DatePicker } from "@mantine/dates";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { useSinks } from "../hooks/useSinks";
@@ -136,10 +135,12 @@ export const NewRecurringTransactionForm = (props: Props) => {
         <tr>
           <td><label htmlFor="nextDate">Next date</label></td>
           <td>
-            <DatePicker
+            <input
               id="nextDate"
-              value={nextDate}
-              onChange={d => setNextDate(d || new Date())}
+              type="date"
+              value={nextDate?.toISOString().split("T")[0]}
+              onChange={e =>
+                setNextDate(isValidDate(new Date(e.target.value)) ? new Date(e.target.value) : new Date())}
             />
           </td>
         </tr>
