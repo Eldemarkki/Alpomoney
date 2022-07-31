@@ -1,9 +1,10 @@
 import styled from "styled-components";
+import { themeVariables } from "../../theme/variables";
 
 export const InputBaseStyles = {
-  border: "1px solid grey",
-  borderRadius: 5,
-  padding: "5px 10px",
+  border: `${themeVariables.borderWidths.xs} solid grey`,
+  borderRadius: themeVariables.borderRadiuses.lg,
+  padding: `${themeVariables.sizes.xxs} ${themeVariables.sizes.xs}`,
   width: "100%",
   height: 35
 };

@@ -23,7 +23,20 @@ const GlobalStyles = createGlobalStyle({
     [themeVariableNames.sidebarTopColorVariableName]: "#010516",
     [themeVariableNames.sidebarActiveLinkColorVariableName]: "#fffaf4",
     [themeVariableNames.sidebarInactiveLinkColorVariableName]: "#faebd7ba",
-    [themeVariableNames.sidebarHoveredLinkColorVariableName]: "#faebd7ff"
+    [themeVariableNames.sidebarHoveredLinkColorVariableName]: "#faebd7ff",
+    [themeVariableNames.sizes.xxs]: "4px",
+    [themeVariableNames.sizes.xs]: "8px",
+    [themeVariableNames.sizes.md]: "16px",
+    [themeVariableNames.sizes.lg]: "24px",
+    [themeVariableNames.sizes.xl]: "32px",
+    [themeVariableNames.borderRadiuses.xs]: "2px",
+    [themeVariableNames.borderRadiuses.md]: "4px",
+    [themeVariableNames.borderRadiuses.lg]: "8px",
+    [themeVariableNames.borderRadiuses.xl]: "16px",
+    [themeVariableNames.borderWidths.xs]: "1px",
+    [themeVariableNames.borderWidths.md]: "2px",
+    [themeVariableNames.borderWidths.lg]: "4px",
+    [themeVariableNames.borderWidths.xl]: "8px"
   }
 });
 

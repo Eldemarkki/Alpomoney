@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { Outlet } from "react-router";
+import { themeVariables } from "../theme/variables";
 
 const Container = styled.div({
   display: "flex",
   gap: 30,
   minHeight: "100vh",
-  padding: 16
+  padding: themeVariables.sizes.md
 });
 
 const Content = styled.main({
-  padding: "24px 16px",
+  padding: `${themeVariables.sizes.lg} ${themeVariables.sizes.md}`,
   flex: 1
 });
 
