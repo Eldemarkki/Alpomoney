@@ -18,16 +18,17 @@ interface ButtonProps {
 type TransientButtonProps = TransientProps<ButtonProps>
 
 const ButtonComponent = styled.button<TransientButtonProps>(props => ({
-  border: "1px solid black",
-  borderWidth: 1,
+  borderWidth: themeVariables.borderWidths.xs,
   borderStyle: "solid",
-  borderRadius: 12,
+  borderRadius: themeVariables.borderRadiuses.lg,
   borderColor: ({
     primary: themeVariables.colors.primary,
     filled: themeVariables.colors.primary,
     transparent: themeVariables.colors.primary
   }[props.$variant || "transparent"]),
-  padding: props.$extraPadding ? "16px 32px" : "8px 16px",
+  padding: props.$extraPadding
+    ? `${themeVariables.sizes.md} ${themeVariables.sizes.xl}`
+    : `${themeVariables.sizes.xs} ${themeVariables.sizes.md}`,
   cursor: "pointer",
   width: props.$fullWidth ? "100%" : "auto",
   backgroundColor: ({
