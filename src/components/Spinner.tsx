@@ -15,7 +15,8 @@ const animationRule = css`
 
 interface SpinnerProps {
   size?: number,
-  thickness?: number
+  thickness?: number,
+  color?: string
 }
 
 export const Spinner = styled.div<SpinnerProps>`
@@ -23,7 +24,7 @@ export const Spinner = styled.div<SpinnerProps>`
   border-radius: 50%;
   width: ${props => props.size || 30}px;
   height: ${props => props.size || 30}px;
-  border: ${props => props.thickness || 3}px solid black;
+  border: ${props => props.thickness || 3}px solid ${props => props.color || "#000"};
   border-right: ${props => props.thickness || 3}px solid transparent;
   transform: rotate(90deg);
 `;

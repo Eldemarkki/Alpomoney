@@ -40,7 +40,9 @@ const ButtonComponent = styled.button<TransientButtonProps>(props => ({
     primary: themeVariables.colors.primary,
     filled: "white",
     transparent: themeVariables.colors.primary
-  }[props.$variant || "transparent"])
+  }[props.$variant || "transparent"]),
+  display: "flex",
+  justifyContent: "center"
 }));
 
 export const Button = forwardRef<HTMLButtonElement, React.PropsWithChildren<ButtonProps &
@@ -62,6 +64,6 @@ export const Button = forwardRef<HTMLButtonElement, React.PropsWithChildren<Butt
       ref={ref}
       {...props}
     >
-      {loading ? <Spinner size={15} /> : props.children}
+      {loading ? <Spinner size={15} color="white" /> : props.children}
     </ButtonComponent>
   ));

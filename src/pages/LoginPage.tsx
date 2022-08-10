@@ -51,12 +51,13 @@ const RegisterLink = styled(Link)({
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useUser();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
+    setIsLoggingIn(true);
     axios.post<User>("/api/auth/login", {
       username,
       password
@@ -65,6 +66,8 @@ export default function LoginPage() {
       navigate("/");
     }).catch(() => {
       console.log("Failed to login");
+    }).finally(() => {
+      setIsLoggingIn(false);
     });
   };
 
@@ -103,7 +106,7 @@ export default function LoginPage() {
             </tr>
           </tbody>
         </table>
-        <Button type="submit" variant="filled">Login</Button>
+        <Button type="submit" variant="filled" loading={isLoggingIn}>Login</Button>
       </Form>
     </FormContainer>
     <RegisterLink to="/register">Don&apos;t have an account yet? Register</RegisterLink>
