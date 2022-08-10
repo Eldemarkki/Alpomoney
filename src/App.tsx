@@ -19,11 +19,11 @@ import { themeVariableNames } from "./theme/variables";
 const GlobalStyles = createGlobalStyle({
   ":root": {
     [themeVariableNames.primaryVariableName]: "#0a0e1e",
-    [themeVariableNames.backgroundColorVariableName]: "#faebd7",
+    [themeVariableNames.backgroundColorVariableName]: "#f8f8f8",
     [themeVariableNames.sidebarTopColorVariableName]: "#010516",
-    [themeVariableNames.sidebarActiveLinkColorVariableName]: "#fffaf4",
-    [themeVariableNames.sidebarInactiveLinkColorVariableName]: "#faebd7ba",
-    [themeVariableNames.sidebarHoveredLinkColorVariableName]: "#faebd7ff",
+    [themeVariableNames.sidebarActiveLinkColorVariableName]: "#fbfbfb",
+    [themeVariableNames.sidebarInactiveLinkColorVariableName]: "#f2f2f285",
+    [themeVariableNames.sidebarHoveredLinkColorVariableName]: "#e2e2e2",
     [themeVariableNames.sizes.xxs]: "4px",
     [themeVariableNames.sizes.xs]: "8px",
     [themeVariableNames.sizes.md]: "16px",
