@@ -8,7 +8,6 @@ import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
-import { useStorages } from "../hooks/useStorages";
 import { useTransactions } from "../hooks/useTransactions";
 
 interface Props {
@@ -32,8 +31,6 @@ export const EditTransactionForm = ({
   const [description, setDescription] = useState(transaction.description);
   const [sinkId, setSinkId] = useState<SinkId | undefined>(transaction.sinkId);
   const [storageId, setStorageId] = useState<StorageId | undefined>(transaction.storageId);
-
-  const { storages } = useStorages();
 
   return <FormComponent onSubmit={async e => {
     e.preventDefault();
@@ -93,7 +90,6 @@ export const EditTransactionForm = ({
           <td>
             <StorageInput
               id="storageId"
-              storages={storages}
               onChange={setStorageId}
               defaultValue={transaction.storageId}
             />

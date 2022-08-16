@@ -1,49 +1,44 @@
-import { Select, SelectProps } from "@mantine/core";
-import { Storage, StorageId } from "@alpomoney/shared";
-import axios from "axios";
+import { StorageId } from "@alpomoney/shared";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addStorage } from "../../features/storagesSlice";
-import { ConvertDates } from "../../utils/types";
-import { InputBaseStyles } from "./InputBase";
+import { useStorages } from "../../hooks/useStorages";
+import Select from "react-select/creatable";
 
 interface Props {
-  storages: Storage[],
-  onChange: (storageId: StorageId | undefined) => void
+  id: string,
+  onChange: (storageId: StorageId | undefined) => void,
+  defaultValue?: StorageId
 }
 
-export const StorageInput = ({
-  storages,
-  onChange,
-  ...props
-}: Props & Omit<SelectProps, "data" | "value" | "onChange">) => {
-  const [selectedId, setSelectedId] = useState<StorageId | null>(props.defaultValue as StorageId | null);
-  const dispatch = useDispatch();
+export const StorageInput = (props: Props) => {
+  const [selectedId, setSelectedId] = useState<StorageId | undefined>(props.defaultValue);
+  const { storages, createStorage } = useStorages();
+
+  const selected = storages.find(s => s.id === selectedId);
 
   return <Select
-    {...props}
-    data={storages.map(storage => ({
-      value: storage.id,
-      label: storage.name
+    id={props.id}
+    options={storages.map(storage => ({
+      label: storage.name,
+      value: storage.id
     }))}
-    value={selectedId}
-    onChange={(id: StorageId | null) => {
-      setSelectedId(id);
-      onChange(id || undefined);
+    value={selected ? { label: selected.name, value: selected.id } : undefined}
+    onChange={storage => {
+      if (storage) {
+        setSelectedId(storage.value);
+        props.onChange(storage.value);
+      } else {
+        setSelectedId(undefined);
+        props.onChange(undefined);
+      }
     }}
-    creatable
-    searchable
     placeholder="Select a storage"
-    nothingFound="No storages"
-    getCreateLabel={query => `+ Create ${query}`}
-    onCreate={async storageName => {
-      const response = await axios.post<ConvertDates<Storage>>("/api/storages", {
-        name: storageName
-      });
-      dispatch(addStorage(response.data));
-    }}
-    styles={{
-      defaultVariant: InputBaseStyles
+    noOptionsMessage={() => "No storages found"}
+    formatCreateLabel={inputValue => `Create "${inputValue}"`}
+    onCreateOption={async (inputValue: string) => {
+      const newStorage = await createStorage(inputValue);
+      setSelectedId(newStorage.id);
+      props.onChange(newStorage.id);
+      return { label: newStorage.name, value: newStorage.id };
     }}
   />;
 };

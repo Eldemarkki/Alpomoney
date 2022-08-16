@@ -15,7 +15,7 @@ export const useStorages = () => {
     }).catch(e => console.log(e));
   }, [dispatch]);
 
-  const createStorage = async (name: string, initialBalance: number) => {
+  const createStorage = async (name: string, initialBalance = 0) => {
     const response = await axios.post<Storage>("/api/storages", { name, initialBalance }, { withCredentials: true });
     console.log(response.data);
     dispatch(addStorage(response.data));

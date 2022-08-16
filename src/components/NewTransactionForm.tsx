@@ -10,7 +10,6 @@ import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
-import { useStorages } from "../hooks/useStorages";
 import { addTransaction } from "../features/transactionsSlice";
 
 const FormComponent = styled.form({
@@ -24,8 +23,6 @@ interface Props {
 }
 
 export const NewTransactionForm = (props: Props) => {
-  const { storages } = useStorages();
-
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
   const [sinkId, setSinkId] = useState<string | undefined>(undefined);
@@ -84,7 +81,6 @@ export const NewTransactionForm = (props: Props) => {
           <td>
             <StorageInput
               id="storageId"
-              storages={storages}
               onChange={setStorageId}
             />
           </td>
