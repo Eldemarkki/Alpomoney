@@ -1,49 +1,44 @@
-import { Select, SelectProps } from "@mantine/core";
-import { Sink, SinkId } from "@alpomoney/shared";
-import axios from "axios";
+import { SinkId } from "@alpomoney/shared";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addSink } from "../../features/sinksSlice";
-import { ConvertDates } from "../../utils/types";
-import { InputBaseStyles } from "./InputBase";
+import Select from "react-select/creatable";
+import { useSinks } from "../../hooks/useSinks";
 
 interface Props {
-  sinks: Sink[],
-  onChange: (sinkId: SinkId | undefined) => void
+  id: string,
+  onChange: (sinkId: SinkId | undefined) => void,
+  defaultValue?: SinkId
 }
 
-export const SinkInput = ({
-  sinks,
-  onChange,
-  ...props
-}: Props & Omit<SelectProps, "data" | "value" | "onChange">) => {
-  const [selectedId, setSelectedId] = useState<SinkId | null>(props.defaultValue as SinkId | null);
-  const dispatch = useDispatch();
+export const SinkInput = (props: Props) => {
+  const [selectedId, setSelectedId] = useState<SinkId | undefined>(props.defaultValue);
+  const { sinks, createSink } = useSinks();
+
+  const selected = sinks.find(s => s.id === selectedId);
 
   return <Select
-    {...props}
-    data={sinks.map(sink => ({
-      value: sink.id,
-      label: sink.name
+    id={props.id}
+    options={sinks.map(sink => ({
+      label: sink.name,
+      value: sink.id
     }))}
-    value={selectedId}
-    onChange={(id: SinkId | null) => {
-      setSelectedId(id);
-      onChange(id || undefined);
+    value={selected ? { label: selected.name, value: selected.id } : undefined}
+    onChange={sink => {
+      if (sink) {
+        setSelectedId(sink.value);
+        props.onChange(sink.value);
+      } else {
+        setSelectedId(undefined);
+        props.onChange(undefined);
+      }
     }}
-    creatable
-    searchable
     placeholder="Select a sink"
-    nothingFound="No sinks"
-    getCreateLabel={query => `+ Create ${query}`}
-    onCreate={async sinkName => {
-      const response = await axios.post<ConvertDates<Sink>>("/api/sinks", {
-        name: sinkName
-      });
-      dispatch(addSink(response.data));
-    }}
-    styles={{
-      defaultVariant: InputBaseStyles
+    noOptionsMessage={() => "No sinks found"}
+    formatCreateLabel={inputValue => `Create "${inputValue}"`}
+    onCreateOption={async (inputValue: string) => {
+      const newSink = await createSink(inputValue);
+      setSelectedId(newSink.id);
+      props.onChange(newSink.id);
+      return { label: newSink.name, value: newSink.id };
     }}
   />;
 };

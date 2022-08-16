@@ -10,7 +10,6 @@ import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
-import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
 import { addTransaction } from "../features/transactionsSlice";
 
@@ -25,7 +24,6 @@ interface Props {
 }
 
 export const NewTransactionForm = (props: Props) => {
-  const { sinks } = useSinks();
   const { storages } = useStorages();
 
   const [amount, setAmount] = useState<number>(0);
@@ -77,7 +75,6 @@ export const NewTransactionForm = (props: Props) => {
           <td>
             <SinkInput
               id="sinkId"
-              sinks={sinks}
               onChange={setSinkId}
             />
           </td>

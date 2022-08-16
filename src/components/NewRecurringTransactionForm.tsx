@@ -10,7 +10,6 @@ import { NumberInput } from "./inputs/NumberInput";
 import { TextInput } from "./inputs/TextInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
-import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
 import { RecurringTransaction, RecurringTransactionFrequency, SinkId, StorageId } from "@alpomoney/shared";
 
@@ -19,7 +18,6 @@ interface Props {
 }
 
 export const NewRecurringTransactionForm = (props: Props) => {
-  const { sinks } = useSinks();
   const { storages } = useStorages();
 
   const [name, setName] = useState<string>("");
@@ -106,7 +104,6 @@ export const NewRecurringTransactionForm = (props: Props) => {
           <td>
             <SinkInput
               id="sinkId"
-              sinks={sinks}
               onChange={setSinkId}
             />
           </td>

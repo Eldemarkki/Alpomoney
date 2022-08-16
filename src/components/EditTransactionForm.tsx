@@ -8,7 +8,6 @@ import { NumberInput } from "./inputs/NumberInput";
 import { SinkInput } from "./inputs/SinkInput";
 import { StorageInput } from "./inputs/StorageInput";
 import { TextInput } from "./inputs/TextInput";
-import { useSinks } from "../hooks/useSinks";
 import { useStorages } from "../hooks/useStorages";
 import { useTransactions } from "../hooks/useTransactions";
 
@@ -34,7 +33,6 @@ export const EditTransactionForm = ({
   const [sinkId, setSinkId] = useState<SinkId | undefined>(transaction.sinkId);
   const [storageId, setStorageId] = useState<StorageId | undefined>(transaction.storageId);
 
-  const { sinks } = useSinks();
   const { storages } = useStorages();
 
   return <FormComponent onSubmit={async e => {
@@ -85,7 +83,6 @@ export const EditTransactionForm = ({
           <td>
             <SinkInput
               id="sinkId"
-              sinks={sinks}
               onChange={setSinkId}
               defaultValue={transaction.sinkId}
             />
